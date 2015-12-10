@@ -16,5 +16,68 @@ download the archive once complete.
 
 After some timeout period the request is invalidated and removed.
 
+## AMQP message protocol
 
+These are the AMQP messages that will be used. All AMQP messages will be JSON objects with the specified forms and 
+fields. Fields are mandatory unless noted.
+
+1. export (client to server)
+    * action - 'export'
+    * client_id - string - an id that the client can initially use to collate the return_request, which will contain a
+      permanent id for the request.
+    * return_queue - string - an AMQP queue that the downloader should use to send messages back to the client. This and
+      the incoming queue should exist ahead of time and both the downloader and client will need access to them. 
+    * root - string - the name of the 'root' from which the content is located. This maps to a directory on each side where
+      the content of interest to that client resides. All content in a request must live underneath that directory; it is an
+      error to escape from it with '..', etc. The downloader maintains a list of these to service multiple clients.
+    * zip_name - string (optional) - the name of the zip file to be produced. If not supplied a non-meaningful one will
+      be generated.
+    * timeout - integer (optional) - the server will automatically delete requests after a number of days, but the client
+      can specify a number of days after which to delete, which will be used if it is smaller than the global number.
+    * targets - array - an array of target (described below) telling the downloader what to include in the archive
+        * target
+            * type - string - either 'file' or 'directory'
+            * recursive - boolean (optional - default: false) - ignored for a file. For a directory specifies whether to include
+              the entire directory tree or just the files immediately included in the directory
+            * path - string - the path relative to the root where the target is. This must resolve to an actual file or
+              directory.
+            * zip_path - string (optional, default '') - the path where the target should be located in the zip file. Files will
+              be located in that directory. Directories (recursive or not) will be a directory in that directory. By default
+              everything just goes in the top level of the zip. The zip will uncompress to a directory based on the zip_name.
+              E.g. something like 'data.zip' will unzip to a 'data' directory with content by default in that directory.
+2. request_received (server to client)
+    * action - 'request_received'
+    * client_id - string - the client_id that the client sent in the export message
+    * id - string - an id that the downloader generates and will recognize for future communication
+    * status - string - 'ok' or 'error' - reports an error if there was a problem generating the request itself. Any
+      errors processing the request will be reported later with an error message
+    * error - string - if the status is 'error' this is an explanation of the problem
+    * download_url - url to get the zip when it is available
+    * status_url - url to get the status of the request
+3. error (server to client)
+    * action - 'error'
+    * id - string - the id of the request
+    * error - string - a description of the error. Examples of errors that might be detected during request processing: 
+      target missing, target outside of root, etc.
+4. request_completed (server to client)
+    * action 'request_completed'
+    * id - string - id of the request
+    * deletion_time - string - when the request will be deleted and the content will no longer be available
+    * download_url - same as request_received
+    * status_url - same as request_received
+    
+Other messages that may be implemented in the future: delete_request, status
+
+## Web interface
+
+This isn't completely defined yet, but users will be able to check on the status of a request. Requests should generally
+result in something downloadable fairly quickly, but the downloader does need to run through all the targets, confirm
+they are valid, and make a manifest. This may take a little time for large numbers of files, whether requested directly
+or through directory targets. These requests will be proxied through nginx to the downloader.
+
+Actual content download will again be proxied through nginx to the downloader. The downloader will return the manifest
+and headers that direct nginx to deliver a zip archive. So the downloader's part in these requests is fairly minimal. 
+Nginx will handle the bulk of the work based on the manifest. If the file system has changed after the generation of the
+manifest there could be errors here, but there's not really a good way to deal with them. By and large there shouldn't be
+changes to the permanently stored content.
 

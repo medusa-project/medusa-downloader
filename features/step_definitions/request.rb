@@ -35,8 +35,8 @@ And(/^a delayed job should be created to process the request$/) do
   expect(Delayed::Job.count).to eq(1)
 end
 
-Then(/^a request should exist with status 'pending'$/) do
-  expect(Request.find_by(status: 'pending')).to be_present
+Then(/^a request should exist with status '(.*)'$/) do |status|
+  expect(Request.find_by(status: status)).to be_present
 end
 
 def valid_amqp_request

@@ -33,4 +33,8 @@ class Config < Object
     config[:roots].detect {|root| root[:name] == name}
   end
 
+  def storage_path
+    config[:storage]
+  end
+
 end

@@ -7,7 +7,7 @@ development:
   roots:
     - name: dev
       path: <%= Rails.root %>/tmp/dev_root
-  manifests: <%= Rails.root %>/tmp/dev_manifests
+  storage: <%= Rails.root %>/tmp/dev_storage
   incoming_queue: client_to_downloader_dev
   amqp:
     port: 5672
@@ -20,7 +20,7 @@ test:
   roots:
     - name: test
       path: <%= Rails.root %>/features/fixtures/content_root
-  manifests: <%= Rails.root %>/tmp/test_manifests
+  storage: <%= Rails.root %>/tmp/test_storage
   incoming_queue: client_to_downloader_test
   amqp:
     port: 5672

@@ -101,4 +101,12 @@ class Request < ActiveRecord::Base
     "#{Config.nginx_url}/#{downloader_id}/status"
   end
 
+  def has_manifest?
+    File.exist?(manifest_path)
+  end
+
+  def manifest_path
+    raise RuntimeError, "Not yet implemented"
+  end
+
 end

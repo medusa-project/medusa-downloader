@@ -4,17 +4,26 @@ class Request < ActiveRecord::Base
   has_one :manifest_creation, dependent: :destroy
 
   def self.from_message(amqp_message)
-    json = JSON.parse(amqp_message).with_indifferent_access
-    id = generate_id
+    parsed_message = JSON.parse(amqp_message).with_indifferent_access
     ActiveRecord::Base.transaction do
-      create_request(json, id).tap do |request|
+      create_request(parsed_message, generate_id).tap do |request|
         ManifestCreation.create_for(request)
-        request.send_request_received
+        request.send_request_received_ok
       end
     end
   rescue JSON::ParserError
     Rails.logger.error "Unable to parse incoming message: #{amqp_message}"
     ErrorMailer.parsing_error(amqp_message).deliver_now
+  rescue Request::NoReturnQueue
+    Rails.logger.error "No return queue for incoming message: #{amqp_message}"
+  rescue Request::NoClientId
+    Rails.logger.error "No client id for incoming message: #{amqp_message}"
+    send_no_client_id_error(parsed_message)
+  rescue Request::InvalidRoot
+    Rails.logger.error "Invalid root for incoming message: #{amqp_message}"
+    send_invalid_root_error(parsed_message)
+  rescue Exception
+    Rails.logger.error "Unknown error for incoming message: #{amqp_message}"
   end
 
   def self.check_parameters(json_request)
@@ -46,16 +55,42 @@ class Request < ActiveRecord::Base
                     status: 'pending', downloader_id: id)
   end
 
-  def send_request_received
+  def self.check_parameters(json)
+    raise Request::NoReturnQueue unless json[:return_queue].present?
+    raise Request::NoClientId unless json[:client_id].present?
+    raise Request::InvalidRoot unless StorageRoot.find(json[:root])
+  end
+
+  def send_request_received_ok
     message = {
-      action: 'request_received',
-      client_id: client_id,
-      status: 'ok',
-      id: downloader_id,
-      download_url: download_url,
-      status_url: status_url
+        action: 'request_received',
+        client_id: client_id,
+        status: 'ok',
+        id: downloader_id,
+        download_url: download_url,
+        status_url: status_url
     }
     AmqpConnector.instance.send_message(self.return_queue, message)
+  end
+
+  def self.send_invalid_root_error(parsed_message)
+    message = {
+        action: 'request_received',
+        client_id: parsed_message[:client_id],
+        status: 'error',
+        error: "Invalid root: #{parsed_message[:root]}"
+    }
+    AmqpConnector.instance.send_message(parsed_message[:return_queue], message)
+  end
+
+  def self.send_no_client_id_error(parsed_message)
+    message = {
+        action: 'request_received',
+        client_id: parsed_message[:client_id],
+        status: 'error',
+        error: "No client id: #{parsed_message.to_json}"
+    }
+    AmqpConnector.instance.send_message(parsed_message[:return_queue], message)
   end
 
   def download_url

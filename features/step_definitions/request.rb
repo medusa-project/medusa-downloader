@@ -7,11 +7,16 @@ Given(/^an unparseable AMQP request is received$/) do
 end
 
 Given(/^an invalid but parseable AMQP request is received$/) do
-  pending # express the regexp above with the code you wish you had
+  Request.from_message(invalid_amqp_request)
 end
 
 Then(/^an error message should be sent to the return queue$/) do
-  pending # express the regexp above with the code you wish you had
+  AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
+    expect(message['action']).to eql('request_received')
+    expect(message['status']).to eql('error')
+    expect(message['client_id']).to eql('client_id')
+    expect(message['error']).to match(/Invalid root/)
+  end
 end
 
 And(/^an acknowlegement message should be sent to the return queue$/) do
@@ -40,7 +45,18 @@ def valid_amqp_request
    root: :test,
    return_queue: :downloader_to_client_test,
    targets: [
-      {type: :file, path: 'cat.txt'},
-      {type: :directory, path: 'child/grandchild', recursive: false}
+       {type: :file, path: 'cat.txt'},
+       {type: :directory, path: 'child/grandchild', recursive: false}
+   ]}.to_json.to_s
+end
+
+def invalid_amqp_request
+  {action: :export,
+   client_id: :client_id,
+   root: :unknown_root,
+   return_queue: :downloader_to_client_test,
+   targets: [
+       {type: :file, path: 'cat.txt'},
+       {type: :directory, path: 'child/grandchild', recursive: false}
    ]}.to_json.to_s
 end

@@ -50,7 +50,11 @@ fields. Fields are mandatory unless noted.
     * client_id - string - the client_id that the client sent in the export message
     * id - string - an id that the downloader generates and will recognize for future communication
     * status - string - 'ok' or 'error' - reports an error if there was a problem generating the request itself. Any
-      errors processing the request will be reported later with an error message
+      errors processing the request will be reported later with an error message. Note that
+      the id, download_url, status_url fields will not be present on an error, and 
+      client_id may not be (if it was not initially supplied). In addition it is possible
+      to send erroneous requests that the downloader is unable to respond to, e.g.
+      if an invalid (or no) return queue is specified.
     * error - string - if the status is 'error' this is an explanation of the problem
     * download_url - url to get the zip when it is available
     * status_url - url to get the status of the request

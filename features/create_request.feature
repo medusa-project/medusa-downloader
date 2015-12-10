@@ -5,7 +5,7 @@ Feature: Create download request
 
   Scenario: Valid request results in request object and delayed job
     Given a valid AMQP request is received
-    Then a request should be created with status 'pending'
+    Then a request should exist with status 'pending'
     And a delayed job should be created to process the request
     And an acknowlegement message should be sent to the return queue
 

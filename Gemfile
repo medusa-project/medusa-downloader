@@ -35,15 +35,14 @@ gem 'rpairtree'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem 'spring'
+  gem 'spring-commands-cucumber'
 end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
-
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
-  gem 'spring'
-
   gem 'capistrano-rails', group: :development
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
@@ -55,6 +54,7 @@ group :test do
   gem 'shoulda'
   gem 'factory_girl'
   gem 'capybara'
+  gem 'capybara-email'
   gem 'database_cleaner'
   gem 'simplecov'
   gem 'json_spec'

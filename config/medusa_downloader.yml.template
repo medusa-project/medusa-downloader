@@ -1,0 +1,4 @@
+development:
+  admin_email: admin@example.com
+test:
+  admin_email: admin@example.com

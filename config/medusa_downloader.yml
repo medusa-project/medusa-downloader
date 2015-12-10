@@ -1,0 +1,10 @@
+development:
+  admin_email: hding2@illinois.edu
+  smtp:
+    address: express-smtp.cites.uiuc.edu
+    domain: libstfsdg01.library.illinois.edu
+test:
+  admin_email: hding2@illinois.edu
+  smtp:
+    address: express-smtp.cites.uiuc.edu
+    domain: libstfsdg01.library.illinois.edu

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151210181150) do
+ActiveRecord::Schema.define(version: 20151210202320) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,14 @@ ActiveRecord::Schema.define(version: 20151210181150) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
+  create_table "manifest_creations", force: :cascade do |t|
+    t.integer  "request_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "manifest_creations", ["request_id"], name: "index_manifest_creations_on_request_id", using: :btree
+
   create_table "requests", force: :cascade do |t|
     t.string   "client_id",     null: false
     t.string   "return_queue",  null: false
@@ -42,6 +50,8 @@ ActiveRecord::Schema.define(version: 20151210181150) do
     t.json     "targets"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.string   "status"
   end
 
+  add_foreign_key "manifest_creations", "requests"
 end

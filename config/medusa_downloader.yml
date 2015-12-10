@@ -1,10 +1,27 @@
+#This file is processed by ERB before being parsed into YAML
 development:
   admin_email: hding2@illinois.edu
   smtp:
     address: express-smtp.cites.uiuc.edu
     domain: libstfsdg01.library.illinois.edu
+  roots:
+    - name: dev
+      path: <%= Rails.root %>/tmp/dev_root
+  manifests: <%= Rails.root %>/tmp/dev_manifests
+  incoming_queue: client_to_downloader_dev
+  amqp:
+    port: 5672
+  nginx_url: http://localhost:8080/app
 test:
   admin_email: hding2@illinois.edu
   smtp:
     address: express-smtp.cites.uiuc.edu
     domain: libstfsdg01.library.illinois.edu
+  roots:
+    - name: test
+      path: <%= Rails.root %>/features/fixtures/content_root
+  manifests: <%= Rails.root %>/tmp/test_manifests
+  incoming_queue: client_to_downloader_test
+  amqp:
+    port: 5672
+  nginx_url: http://localhost:8080/app

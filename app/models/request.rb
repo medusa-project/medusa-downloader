@@ -1,4 +1,5 @@
 require 'securerandom'
+require 'fileutils'
 class Request < ActiveRecord::Base
 
   has_one :manifest_creation, dependent: :destroy
@@ -105,8 +106,22 @@ class Request < ActiveRecord::Base
     File.exist?(manifest_path)
   end
 
+  def storage_path
+    File.join(Config.instance.storage_path, self.downloader_id)
+  end
+
   def manifest_path
-    raise RuntimeError, "Not yet implemented"
+    File.join(storage_path, 'manifest.txt')
+  end
+
+  def generate_manifest_and_links
+    FileUtils.mkdir_p(File.dirname(manifest_path))
+    File.open(manifest_path, 'wb') do |f|
+      #TODO use targets to create actual manifest and links
+      f.puts 'fake manifest'
+    end
+    self.status = 'ready'
+    self.save!
   end
 
 end

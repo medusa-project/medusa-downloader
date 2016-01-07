@@ -7,5 +7,12 @@ Then(/^a manifest should have been generated$/) do
 end
 
 And(/^a completion message should have been sent$/) do
-  pending # express the regexp above with the code you wish you had
+  AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
+    expect(message['action']).to eql('request_received')
+    expect(message['status']).to eql('ok')
+    expect(message['client_id']).to eql('client_id')
+    expect(message['id']).to eql(@request.downloader_id)
+    expect(message['download_url']).to eql(@request.download_url)
+    expect(message['status_url']).to eql(@request.status_url)
+  end
 end

@@ -7,7 +7,7 @@ class ManifestCreation < ActiveRecord::Base
   end
 
   def perform
-
+    self.request.generate_manifest_and_links
   end
 
 end

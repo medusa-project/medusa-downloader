@@ -7,7 +7,12 @@ Feature: Download archive
     When PENDING
 
   Scenario: Attempt to download an archive that does not exist
-    When PENDING
+    When I visit the download url for a missing archive
+    Then the page should not be found
 
   Scenario: Get a status report for an existing request
     When PENDING
+
+  Scenario: Get a status report for an archive that does not exist
+    When I visit the status url for a missing archive
+    Then the page should not be found

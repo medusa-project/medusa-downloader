@@ -167,6 +167,8 @@ class Request < ActiveRecord::Base
   end
 
   def add_directory(target)
+    directory_path = self.storage_root.path_to(target['path'])
+    raise InvalidFileError(self.root, target['path']) unless Dir.exist?(directory_path)
     if target['recursive'] == true
       add_directory_recursive(target)
     else

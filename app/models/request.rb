@@ -2,6 +2,8 @@ require 'securerandom'
 require 'fileutils'
 class Request < ActiveRecord::Base
 
+  attr_accessor :file_list
+
   has_one :manifest_creation, dependent: :destroy
 
   def self.from_message(amqp_message)
@@ -116,12 +118,22 @@ class Request < ActiveRecord::Base
 
   def generate_manifest_and_links
     FileUtils.mkdir_p(File.dirname(manifest_path))
+    generate_file_list
     File.open(manifest_path, 'wb') do |f|
       #TODO use targets to create actual manifest and links
       f.puts 'fake manifest'
     end
     self.status = 'ready'
     self.save!
+  end
+
+  #create from the targets a list of files to be included and also their destinations in the zip file and sizes
+  #throw an error if a file/directory does not exist or if it is outside of the root
+  def generate_file_list
+    self.file_list = Array.new
+    self.targets.each do |target|
+      
+    end
   end
 
 end

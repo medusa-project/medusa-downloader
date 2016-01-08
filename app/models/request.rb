@@ -116,13 +116,20 @@ class Request < ActiveRecord::Base
     File.join(storage_path, 'manifest.txt')
   end
 
+  def data_path
+    File.join(storage_path, 'data')
+  end
+
   def generate_manifest_and_links
     FileUtils.mkdir_p(File.dirname(manifest_path))
+    FileUtils.mkdir_p(data_path)
     generate_file_list
     File.open(manifest_path, 'wb') do |f|
-      self.file_list.each do |path, zip_path, size|
-        #TODO - link and use the link for the path, or urlencode the path as mod_zip expects
-        f.write "- #{size} #{path} #{zip_path}"
+      self.file_list.each.with_index do |spec, i|
+        path, zip_path, size = spec
+        symlink_path = File.join(data_path, i.to_s)
+        FileUtils.symlink(path, symlink_path)
+        f.write "- #{size} #{relative_path_to(symlink_path)} #{zip_path}"
       end
     end
     self.status = 'ready'
@@ -172,6 +179,10 @@ class Request < ActiveRecord::Base
 
   def add_directory_simple(target)
 
+  end
+
+  def relative_path_to(absolute_path)
+    absolute_path.sub(/^#{Config.instance.storage_path}/, '')
   end
 
 end

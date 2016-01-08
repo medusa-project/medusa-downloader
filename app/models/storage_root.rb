@@ -5,7 +5,7 @@ class StorageRoot
 
   def self.find(name)
     root = Config.root_named(name)
-    raise InvalidStorageRootError.new(root) unless root
+    raise Request::InvalidRoot unless root
     return new(root)
   end
 

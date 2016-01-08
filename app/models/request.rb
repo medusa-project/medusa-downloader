@@ -177,7 +177,16 @@ class Request < ActiveRecord::Base
   end
 
   def add_directory_recursive(directory_path, zip_path)
-
+    dir = Pathname.new(directory_path)
+    dir.find.each do |descendant|
+      if descendant.file?
+        zip_file_path = File.join(zip_path, descendant.to_s.sub(/^#{dir.to_s}\//, ''))
+        size = descendant.size
+        self.file_list << [descendant.to_s, zip_file_path, size]
+      else
+        #Find.prune if recurse.blank? and descendant.directory?
+      end
+    end
   end
 
   def add_directory_simple(directory_path, zip_path)

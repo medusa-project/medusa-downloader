@@ -96,6 +96,15 @@ class Request < ActiveRecord::Base
     AmqpConnector.instance.send_message(parsed_message[:return_queue], message)
   end
 
+  def send_invalid_file_error(error)
+    message = {
+        action: 'error',
+        id: downloader_id,
+        error: "Missing or invalid file or directory: #{error.relative_path}"
+    }
+    AmqpConnector.instance.send_message(return_queue, message)
+  end
+
   def download_url
     "#{Config.nginx_url}/#{downloader_id}/download"
   end
@@ -133,6 +142,11 @@ class Request < ActiveRecord::Base
       end
     end
     self.status = 'ready'
+    self.save!
+  rescue InvalidFileError => e
+    send_invalid_file_error(e)
+    File.delete(manifest_path) if File.exist?(manifest_path)
+    self.status = 'missing_or_invalid_targets'
     self.save!
   end
 

@@ -10,7 +10,7 @@ Feature: Create download request
     And an acknowlegement message should be sent to the return queue
 
   Scenario: Invalid but parseable request returns error message
-    Given an invalid but parseable AMQP request is received
+    Given an invalid root but parseable AMQP request is received
     Then an error message should be sent to the return queue
 
   Scenario: Invalid, unparseable request fails

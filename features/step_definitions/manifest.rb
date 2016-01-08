@@ -6,6 +6,10 @@ Then(/^a manifest should have been generated$/) do
   expect(@request.has_manifest?).to be_truthy
 end
 
+Then(/^no manifest should have been generated$/) do
+  expect(@request.has_manifest?).to be_falsey
+end
+
 And(/^a completion message should have been sent$/) do
   AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
     expect(message['action']).to eql('request_received')
@@ -16,3 +20,4 @@ And(/^a completion message should have been sent$/) do
     expect(message['status_url']).to eql(@request.status_url)
   end
 end
+

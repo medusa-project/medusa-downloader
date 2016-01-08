@@ -19,8 +19,10 @@ class StorageRoot
   def path_to(relative_path)
     file_pathname = Pathname.new(File.join(self.pathname.to_s, relative_path))
     file_pathname.realpath.to_s.tap do |absolute_path|
-      raise InvalidFileError(name, relative_path) unless absolute_path.match(/^#{self.real_path}/)
+      raise InvalidFileError.new(name, relative_path) unless absolute_path.match(/^#{self.real_path}/)
     end
+  rescue Errno::ENOENT
+    raise InvalidFileError.new(name, relative_path)
   end
 
 end

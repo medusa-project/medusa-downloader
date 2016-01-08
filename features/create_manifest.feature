@@ -11,6 +11,10 @@ Feature: Create manifest
     And a request should exist with status 'ready'
 
   Scenario: Delayed job fails to produce manifest if files are missing and notifies client
-    When PENDING
+    Given a missing files but parseable AMQP request is received
+    And delayed jobs are run
+    Then no manifest should have been generated
+    And a missing files message should have been sent
+    And a request should exist with status 'missing_or_invalid_targets'
 
 

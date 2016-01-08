@@ -129,7 +129,7 @@ class Request < ActiveRecord::Base
         path, zip_path, size = spec
         symlink_path = File.join(data_path, i.to_s)
         FileUtils.symlink(path, symlink_path)
-        f.write "- #{size} #{relative_path_to(symlink_path)} #{zip_name}/#{zip_path}"
+        f.write "- #{size} #{relative_path_to(symlink_path)} #{zip_name}/#{zip_path}\r\n"
       end
     end
     self.status = 'ready'
@@ -170,18 +170,24 @@ class Request < ActiveRecord::Base
     directory_path = self.storage_root.path_to(target['path'])
     raise InvalidFileError(self.root, target['path']) unless Dir.exist?(directory_path)
     if target['recursive'] == true
-      add_directory_recursive(directory_path, target['zip_path'])
+      add_directory_recursive(directory_path, target['zip_path'] || target['path'])
     else
-      add_directory_simple(directory_path, target['zip_path'])
+      add_directory_simple(directory_path, target['zip_path'] || target['path'])
     end
   end
 
   def add_directory_recursive(directory_path, zip_path)
-    zip_path ||= directory_path
+
   end
 
   def add_directory_simple(directory_path, zip_path)
-    zip_path ||= directory_path
+    dir = Pathname.new(directory_path)
+    dir.children.each do |child|
+      next unless child.file?
+      zip_file_path = File.join(zip_path, child.basename)
+      size = child.size
+      self.file_list << [child.to_s, zip_file_path, size]
+    end
   end
 
   def relative_path_to(absolute_path)

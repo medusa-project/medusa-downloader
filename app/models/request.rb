@@ -177,11 +177,11 @@ class Request < ActiveRecord::Base
   end
 
   def add_directory_recursive(directory_path, zip_path)
-    zip_path ||= File.basename(directory_path)
+    zip_path ||= directory_path
   end
 
   def add_directory_simple(directory_path, zip_path)
-    zip_path ||= File.basename(directory_path)
+    zip_path ||= directory_path
   end
 
   def relative_path_to(absolute_path)

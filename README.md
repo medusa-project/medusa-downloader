@@ -31,7 +31,7 @@ fields. Fields are mandatory unless noted.
       the content of interest to that client resides. All content in a request must live underneath that directory; it is an
       error to escape from it with '..', etc. The downloader maintains a list of these to service multiple clients.
     * zip_name - string (optional) - the name of the zip file to be produced. If not supplied a non-meaningful one will
-      be generated.
+      be generated. Do not append the '.zip' extension.
     * timeout - integer (optional) - the server will automatically delete requests after a number of days, but the client
       can specify a number of days after which to delete, which will be used if it is smaller than the global number.
     * targets - array - an array of target (described below) telling the downloader what to include in the archive

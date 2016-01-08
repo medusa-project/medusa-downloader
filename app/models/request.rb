@@ -2,7 +2,7 @@ require 'securerandom'
 require 'fileutils'
 class Request < ActiveRecord::Base
 
-  attr_accessor :file_list
+  attr_accessor :file_list, :storage_root
 
   has_one :manifest_creation, dependent: :destroy
 
@@ -120,20 +120,58 @@ class Request < ActiveRecord::Base
     FileUtils.mkdir_p(File.dirname(manifest_path))
     generate_file_list
     File.open(manifest_path, 'wb') do |f|
-      #TODO use targets to create actual manifest and links
-      f.puts 'fake manifest'
+      self.file_list.each do |path, zip_path, size|
+        #TODO - link and use the link for the path, or urlencode the path as mod_zip expects
+        f.write "- #{size} #{path} #{zip_path}"
+      end
     end
     self.status = 'ready'
     self.save!
   end
 
   #create from the targets a list of files to be included and also their destinations in the zip file and sizes
-  #throw an error if a file/directory does not exist or if it is outside of the root
+  #throw an error if a file/directory does not exist, if it is outside of the root, if the target type is invalid,
+  #etc.
   def generate_file_list
+    self.storage_root = StorageRoot.find(self.root)
     self.file_list = Array.new
     self.targets.each do |target|
-      
+      add_target(target)
     end
+  end
+
+  def add_target(target)
+    case target['type']
+      when 'file'
+        add_file(target)
+      when 'directory'
+        add_directory(target)
+      else
+        raise InvalidTargetTypeError.new(target)
+    end
+  end
+
+  def add_file(target)
+    file_path = self.storage_root.path_to(target['path'])
+    zip_file_path = target[:zip_path] || File.basename(file_path)
+    size = File.size(file_path)
+    self.file_list << [file_path, zip_file_path, size]
+  end
+
+  def add_directory(target)
+    if target['recursive'] == true
+      add_directory_recursive(target)
+    else
+      add_directory_simple(target)
+    end
+  end
+
+  def add_directory_recursive(target)
+
+  end
+
+  def add_directory_simple(target)
+
   end
 
 end

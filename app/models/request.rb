@@ -160,6 +160,7 @@ class Request < ActiveRecord::Base
 
   def add_file(target)
     file_path = self.storage_root.path_to(target['path'])
+    raise InvalidFileError(self.root, target['path']) unless File.file?(file_path)
     zip_file_path = target[:zip_path] || File.basename(file_path)
     size = File.size(file_path)
     self.file_list << [file_path, zip_file_path, size]

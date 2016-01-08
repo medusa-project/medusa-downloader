@@ -169,33 +169,18 @@ class Request < ActiveRecord::Base
   def add_directory(target)
     directory_path = self.storage_root.path_to(target['path'])
     raise InvalidFileError(self.root, target['path']) unless Dir.exist?(directory_path)
-    if target['recursive'] == true
-      add_directory_recursive(directory_path, target['zip_path'] || target['path'])
-    else
-      add_directory_simple(directory_path, target['zip_path'] || target['path'])
-    end
-  end
-
-  def add_directory_recursive(directory_path, zip_path)
+    zip_path = target['zip_path'] || target['path']
+    recurse = target['recursive'] == true
     dir = Pathname.new(directory_path)
     dir.find.each do |descendant|
+      next if descendant == dir
       if descendant.file?
         zip_file_path = File.join(zip_path, descendant.to_s.sub(/^#{dir.to_s}\//, ''))
         size = descendant.size
         self.file_list << [descendant.to_s, zip_file_path, size]
       else
-        #Find.prune if recurse.blank? and descendant.directory?
+        Find.prune if recurse.blank? and descendant.directory?
       end
-    end
-  end
-
-  def add_directory_simple(directory_path, zip_path)
-    dir = Pathname.new(directory_path)
-    dir.children.each do |child|
-      next unless child.file?
-      zip_file_path = File.join(zip_path, child.basename)
-      size = child.size
-      self.file_list << [child.to_s, zip_file_path, size]
     end
   end
 

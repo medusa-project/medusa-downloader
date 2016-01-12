@@ -16,3 +16,10 @@ Feature: Download archive
   Scenario: Get a status report for an archive that does not exist
     When I visit the status url for a missing archive
     Then the page should not be found
+
+  Scenario: Get a manifest for an existing request
+    When PENDING
+
+  Scenario: Get a status report for an archive that does not exist
+    When I visit the manifest url for a missing archive
+    Then the page should not be found

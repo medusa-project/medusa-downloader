@@ -6,6 +6,10 @@ class Request < ActiveRecord::Base
 
   has_one :manifest_creation, dependent: :destroy
 
+  STATUSES = %w(pending creating_manifest ready missing_or_invalid_targets)
+
+  validates :status, inclusion: STATUSES, allow_blank: false
+
   def self.from_message(amqp_message)
     parsed_message = JSON.parse(amqp_message).with_indifferent_access
     ActiveRecord::Base.transaction do
@@ -106,11 +110,15 @@ class Request < ActiveRecord::Base
   end
 
   def download_url
-    "#{Config.nginx_url}/#{downloader_id}/download"
+    "#{Config.nginx_url}/#{downloader_id}/get"
   end
 
   def status_url
     "#{Config.nginx_url}/#{downloader_id}/status"
+  end
+
+  def manifest_url
+    "#{Config.nginx_url}/#{downloader_id}/manifest"
   end
 
   def has_manifest?
@@ -130,6 +138,7 @@ class Request < ActiveRecord::Base
   end
 
   def generate_manifest_and_links
+    self.status = 'creating_manifest'
     FileUtils.mkdir_p(File.dirname(manifest_path))
     FileUtils.mkdir_p(data_path)
     generate_file_list

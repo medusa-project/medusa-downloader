@@ -1,11 +1,16 @@
 Then(/^the page should not be found$/) do
-  pending # express the regexp above with the code you wish you had
+  expect(page.status_code).to eq(404)
+  expect(page.body).to match('Requested archive not found')
 end
 
 When(/^I visit the status url for a missing archive$/) do
-  pending # express the regexp above with the code you wish you had
+  visit(status_path(id: 'bad_id'))
 end
 
 When(/^I visit the download url for a missing archive$/) do
-  pending # express the regexp above with the code you wish you had
+  visit(get_path(id: 'bad_id'))
+end
+
+When(/^I visit the manifest url for a missing archive$/) do
+  visit(manifest_path(id: 'bad_id'))
 end

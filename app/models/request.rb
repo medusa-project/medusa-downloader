@@ -211,4 +211,10 @@ class Request < ActiveRecord::Base
     absolute_path.sub(/^#{Config.instance.storage_path}/, '')
   end
 
+  STATUSES.each do |status|
+    define_method :"#{status}?" do
+      self.status == status
+    end
+  end
+
 end

@@ -10,16 +10,38 @@ Feature: Download archive
     When I visit the download url for a missing archive
     Then the page should not be found
 
+  Scenario: Attempt to download an archive that exists but is not yet ready
+    Given a valid AMQP request is received
+    When I visit the download url for a valid request
+    Then the manifest should not be ready
+
   Scenario: Get a status report for an existing request
-    When PENDING
+    Given a valid AMQP request is received
+    When I visit the status url for a valid request
+    Then I should see 'pending'
+
+  Scenario: Get a status report for a ready request
+    Given a valid AMQP request is received
+    And delayed jobs are run
+    When I visit the status url for a valid request
+    Then I should see 'ready'
+    And I should see a download zip link
 
   Scenario: Get a status report for an archive that does not exist
     When I visit the status url for a missing archive
     Then the page should not be found
 
   Scenario: Get a manifest for an existing request
-    When PENDING
+    Given a valid AMQP request is received
+    And delayed jobs are run
+    When I visit the manifest url for a valid request
+    Then I should get the manifest for a valid request
 
-  Scenario: Get a status report for an archive that does not exist
+  Scenario: Get a manifest for an archive that does not exist
     When I visit the manifest url for a missing archive
     Then the page should not be found
+
+  Scenario: Attempt to get a manifiest for an archive that exists but is not yet ready
+    Given a valid AMQP request is received
+    When I visit the manifest url for a valid request
+    Then the manifest should not be ready

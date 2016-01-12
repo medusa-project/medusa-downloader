@@ -1,0 +1,8 @@
+%div
+  %strong Status:
+  = @request.status
+
+- if @request.ready?
+  %div
+    %strong Download Url:
+    = link_to 'Download Zip', @request.download_url

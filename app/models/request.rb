@@ -147,7 +147,7 @@ class Request < ActiveRecord::Base
         path, zip_path, size = spec
         symlink_path = File.join(data_path, i.to_s)
         FileUtils.symlink(path, symlink_path)
-        f.write "- #{size} #{relative_path_to(symlink_path)} #{zip_name}/#{zip_path}\r\n"
+        f.write "- #{size} /internal/#{relative_path_to(symlink_path)} #{zip_name}/#{zip_path}\r\n"
       end
     end
     self.status = 'ready'

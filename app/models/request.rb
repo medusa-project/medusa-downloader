@@ -110,15 +110,15 @@ class Request < ActiveRecord::Base
   end
 
   def download_url
-    "#{Config.nginx_url}/#{downloader_id}/get"
+    "#{Config.nginx_url}/downloads/#{downloader_id}/get"
   end
 
   def status_url
-    "#{Config.nginx_url}/#{downloader_id}/status"
+    "#{Config.nginx_url}/downloads/#{downloader_id}/status"
   end
 
   def manifest_url
-    "#{Config.nginx_url}/#{downloader_id}/manifest"
+    "#{Config.nginx_url}/downloads/#{downloader_id}/manifest"
   end
 
   def has_manifest?

@@ -25,6 +25,10 @@ class Config < Object
     config[:amqp].symbolize_keys
   end
 
+  def incoming_queue
+    config[:incoming_queue]
+  end
+
   def nginx_url
     config[:nginx_url]
   end

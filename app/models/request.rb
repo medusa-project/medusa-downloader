@@ -10,6 +10,8 @@ class Request < ActiveRecord::Base
 
   validates :status, inclusion: STATUSES, allow_blank: false
 
+  after_destroy :delete_manifest_and_links
+
   def self.from_message(amqp_message)
     parsed_message = JSON.parse(amqp_message).with_indifferent_access
     ActiveRecord::Base.transaction do
@@ -137,6 +139,10 @@ class Request < ActiveRecord::Base
     File.join(storage_path, 'data')
   end
 
+  def delete_manifest_and_links
+    FileUtils.rm_rf(storage_path) if Dir.exist?(storage_path)
+  end
+
   def generate_manifest_and_links
     self.status = 'creating_manifest'
     FileUtils.mkdir_p(File.dirname(manifest_path))
@@ -147,7 +153,7 @@ class Request < ActiveRecord::Base
         path, zip_path, size = spec
         symlink_path = File.join(data_path, i.to_s)
         FileUtils.symlink(path, symlink_path)
-        f.write "- #{size} /internal/#{relative_path_to(symlink_path)} #{zip_name}/#{zip_path}\r\n"
+        f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{zip_name}/#{zip_path}\r\n"
       end
     end
     self.status = 'ready'

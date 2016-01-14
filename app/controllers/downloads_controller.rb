@@ -5,7 +5,7 @@ class DownloadsController < ApplicationController
   def get
     if @request.ready?
       response.headers['X-Archive-Files'] = 'zip'
-      response.headers['X-Archive-Charset'] = 'UTF-8'
+      #response.headers['X-Archive-Charset'] = 'UTF-8'
       send_file @request.manifest_path, disposition: :attachment, filename: "#{@request.zip_name}.zip"
     else
       render status: :not_found, plain: 'Manifest is not yet ready for this archive'

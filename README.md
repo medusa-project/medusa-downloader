@@ -85,3 +85,18 @@ Nginx will handle the bulk of the work based on the manifest. If the file system
 manifest there could be errors here, but there's not really a good way to deal with them. By and large there shouldn't be
 changes to the permanently stored content.
 
+## Extraction
+
+This application in conjunction with nginx produces archives in the 
+zip format. If the request exceeds what the normal zip format (4GB or
+something like 65000 files) can handle then the nginx mod_zip module
+automatically produces a zip64 archive instead (sufficient for anything
+we might do). However, not all unzip tools handle these correctly.
+Most notably, OS X, as of version 10.11, does not, either with the 
+command line unzip program or the standard finder tool. The Windows 
+Explorer and Linux unzip (and derivatives) seem to work fine. 
+ 
+Alternatives that we have seen work on the Mac include 7zip (available via
+homebrew as 7z or probably as a more normal Mac download from the 7zip
+website) and The Unarchiver.
+

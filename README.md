@@ -98,5 +98,6 @@ Explorer and Linux unzip (and derivatives) seem to work fine.
  
 Alternatives that we have seen work on the Mac include 7zip (available via
 homebrew as 7z or probably as a more normal Mac download from the 7zip
-website) and The Unarchiver.
+website) and The Unarchiver (available through the app store or in more
+featureful form through its own website).
 

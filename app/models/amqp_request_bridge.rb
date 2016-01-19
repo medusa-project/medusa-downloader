@@ -1,4 +1,4 @@
-class AmqpRequestFactory < Object
+class AmqpRequestBridge < Object
 
   def self.create_request(amqp_message)
     from_message(amqp_message).tap do |request|

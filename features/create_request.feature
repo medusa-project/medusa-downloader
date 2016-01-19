@@ -19,6 +19,6 @@ Feature: Create download request
 
   Scenario: Valid HTTP request results in request object and delayed job
     Given a valid HTTP request is received
-    Then a request should exist with status 'pending'
-    And a delayed job should be created to process the request
-    And an HTTP response should be received
+    Then a request should exist with status 'ready'
+    And a manifest should have been generated
+    And an HTTP response should be received indicating success

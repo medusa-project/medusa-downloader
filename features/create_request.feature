@@ -16,3 +16,9 @@ Feature: Create download request
   Scenario: Invalid, unparseable request fails
     Given an unparseable AMQP request is received
     Then an error message should be emailed to the admin
+
+  Scenario: Valid HTTP request results in request object and delayed job
+    Given a valid HTTP request is received
+    Then a request should exist with status 'pending'
+    And a delayed job should be created to process the request
+    And an HTTP response should be received

@@ -12,13 +12,13 @@ class Request < ActiveRecord::Base
 
   after_destroy :delete_manifest_and_links
 
-  def self.from_message(amqp_message)
+  def self.from_amqp_message(amqp_message)
     parsed_message = JSON.parse(amqp_message).with_indifferent_access
     ActiveRecord::Base.transaction do
-      create_request(parsed_message).tap do |request|
-        ManifestCreation.create_for(request)
-        request.send_request_received_ok
-      end
+      request = create_request(parsed_message)
+      ManifestCreation.create_for(request)
+      request.send_request_received_ok
+      request
     end
   rescue JSON::ParserError
     Rails.logger.error "Unable to parse incoming message: #{amqp_message}"
@@ -166,9 +166,9 @@ class Request < ActiveRecord::Base
     self.save!
   end
 
-  #create from the targets a list of files to be included and also their destinations in the zip file and sizes
-  #throw an error if a file/directory does not exist, if it is outside of the root, if the target type is invalid,
-  #etc.
+#create from the targets a list of files to be included and also their destinations in the zip file and sizes
+#throw an error if a file/directory does not exist, if it is outside of the root, if the target type is invalid,
+#etc.
   def generate_file_list
     self.storage_root = StorageRoot.find(self.root)
     self.file_list = Array.new

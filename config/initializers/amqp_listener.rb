@@ -12,7 +12,7 @@ if defined?(PhusionPassenger)
         queue = channel.queue(Config.instance.incoming_queue, durable: true)
         queue.subscribe do |delivery_info, properties, payload|
           begin
-            Request.from_message(payload)
+            Request.from_amqp_message(payload)
             Rails.logger.info "Created request from #{payload}"
           rescue Exception => e
             Rails.logger.error "Failed to create request from #{payload}: #{e}"

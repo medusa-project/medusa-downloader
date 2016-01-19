@@ -15,7 +15,7 @@ class Request < ActiveRecord::Base
   def self.from_amqp_message(amqp_message)
     parsed_message = JSON.parse(amqp_message).with_indifferent_access
     ActiveRecord::Base.transaction do
-      request = create_request(parsed_message)
+      request = from_message(amqp_message)
       ManifestCreation.create_for(request)
       request.send_request_received_ok
       request
@@ -33,6 +33,13 @@ class Request < ActiveRecord::Base
     send_invalid_root_error(parsed_message)
   rescue Exception
     Rails.logger.error "Unknown error for incoming message: #{amqp_message}"
+  end
+
+  def self.from_message(unparsed_message)
+    parsed_message = JSON.parse(unparsed_message).with_indifferent_access
+    ActiveRecord::Base.transaction do
+      create_request(parsed_message)
+    end
   end
 
   def self.check_parameters(json_request)

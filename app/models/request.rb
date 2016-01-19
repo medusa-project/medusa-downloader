@@ -15,7 +15,7 @@ class Request < ActiveRecord::Base
   def self.from_message(amqp_message)
     parsed_message = JSON.parse(amqp_message).with_indifferent_access
     ActiveRecord::Base.transaction do
-      create_request(parsed_message, generate_id).tap do |request|
+      create_request(parsed_message).tap do |request|
         ManifestCreation.create_for(request)
         request.send_request_received_ok
       end
@@ -57,8 +57,9 @@ class Request < ActiveRecord::Base
     end
   end
 
-  def self.create_request(json, id)
+  def self.create_request(json)
     check_parameters(json)
+    id = generate_id
     Request.create!(client_id: json[:client_id], return_queue: json[:return_queue],
                     root: json[:root], zip_name: zip_name(json, id), timeout: timeout(json), targets: json[:targets],
                     status: 'pending', downloader_id: id)

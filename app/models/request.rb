@@ -13,12 +13,9 @@ class Request < ActiveRecord::Base
   after_destroy :delete_manifest_and_links
 
   def self.from_amqp_message(amqp_message)
-    parsed_message = JSON.parse(amqp_message).with_indifferent_access
-    ActiveRecord::Base.transaction do
-      request = from_message(amqp_message)
+    from_message(amqp_message).tap do |request|
       ManifestCreation.create_for(request)
       request.send_request_received_ok
-      request
     end
   rescue JSON::ParserError
     Rails.logger.error "Unable to parse incoming message: #{amqp_message}"
@@ -27,10 +24,10 @@ class Request < ActiveRecord::Base
     Rails.logger.error "No return queue for incoming message: #{amqp_message}"
   rescue Request::NoClientId
     Rails.logger.error "No client id for incoming message: #{amqp_message}"
-    send_no_client_id_error(parsed_message)
+    send_no_client_id_error(amqp_message)
   rescue Request::InvalidRoot
     Rails.logger.error "Invalid root for incoming message: #{amqp_message}"
-    send_invalid_root_error(parsed_message)
+    send_invalid_root_error(amqp_message)
   rescue Exception
     Rails.logger.error "Unknown error for incoming message: #{amqp_message}"
   end
@@ -90,7 +87,8 @@ class Request < ActiveRecord::Base
     AmqpConnector.instance.send_message(self.return_queue, message)
   end
 
-  def self.send_invalid_root_error(parsed_message)
+  def self.send_invalid_root_error(amqp_message)
+    parsed_message = JSON.parse(amqp_message).with_indifferent_access
     message = {
         action: 'request_received',
         client_id: parsed_message[:client_id],
@@ -100,7 +98,8 @@ class Request < ActiveRecord::Base
     AmqpConnector.instance.send_message(parsed_message[:return_queue], message)
   end
 
-  def self.send_no_client_id_error(parsed_message)
+  def self.send_no_client_id_error(amqp_message)
+    parsed_message = JSON.parse(amqp_message).with_indifferent_access
     message = {
         action: 'request_received',
         client_id: parsed_message[:client_id],

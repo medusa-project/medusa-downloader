@@ -12,15 +12,6 @@ class Request < ActiveRecord::Base
 
   after_destroy :delete_manifest_and_links
 
-  def send_invalid_file_error(error)
-    message = {
-        action: 'error',
-        id: downloader_id,
-        error: "Missing or invalid file or directory: #{error.relative_path}"
-    }
-    AmqpConnector.instance.send_message(return_queue, message)
-  end
-
   def download_url
     "#{Config.nginx_url}/downloads/#{downloader_id}/get"
   end
@@ -69,7 +60,7 @@ class Request < ActiveRecord::Base
     self.status = 'ready'
     self.save!
   rescue InvalidFileError => e
-    send_invalid_file_error(e)
+    AmqpRequestBridge.send_invalid_file_error(e, self)
     File.delete(manifest_path) if File.exist?(manifest_path)
     self.status = 'missing_or_invalid_targets'
     self.save!

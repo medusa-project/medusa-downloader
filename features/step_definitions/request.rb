@@ -1,17 +1,17 @@
 Given(/^a valid AMQP request is received$/) do
-  @request = Request.from_amqp_message(valid_amqp_request)
+  @request = AmqpRequestFactory.create_request(valid_amqp_request)
 end
 
 Given(/^an unparseable AMQP request is received$/) do
-  @request = Request.from_amqp_message('invalid_json')
+  @request = AmqpRequestFactory.create_request('invalid_json')
 end
 
 Given(/^an invalid root but parseable AMQP request is received$/) do
-  @request = Request.from_amqp_message(invalid_root_amqp_request)
+  @request = AmqpRequestFactory.create_request(invalid_root_amqp_request)
 end
 
 Given(/^a missing files but parseable AMQP request is received$/) do
-  @request = Request.from_amqp_message(missing_files_amqp_request)
+  @request = AmqpRequestFactory.create_request(missing_files_amqp_request)
 end
 
 Then(/^an error message should be sent to the return queue$/) do

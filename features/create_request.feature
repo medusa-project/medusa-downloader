@@ -9,7 +9,7 @@ Feature: Create download request
     And a delayed job should be created to process the request
     And an acknowlegement message should be sent to the return queue
 
-  Scenario: Invalid but parseable request returns error message
+  Scenario: Invalid root but parseable request returns error message
     Given an invalid root but parseable AMQP request is received
     Then an error message should be sent to the return queue
 

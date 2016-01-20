@@ -44,3 +44,4 @@ Then(/^I should get the manifest for a valid request$/) do
   request = Request.find_by(status: 'ready')
   expect(page.body).to eql(File.read(request.manifest_path))
 end
+

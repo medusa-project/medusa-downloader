@@ -53,7 +53,15 @@ Then(/^a request should exist with status '(.*)'$/) do |status|
   expect(Request.find_by(status: status)).to be_present
 end
 
-def valid_amqp_request_hash
+Given(/^a valid HTTP request is received$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+And(/^an HTTP response should be received indicating success$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
+def valid_request_hash
   {action: :export,
    client_id: :client_id,
    root: :test,
@@ -65,17 +73,17 @@ def valid_amqp_request_hash
 end
 
 def valid_amqp_request
-  valid_amqp_request_hash.to_json.to_s
+  valid_request_hash.to_json.to_s
 end
 
 def invalid_root_amqp_request
-  h = valid_amqp_request_hash
+  h = valid_request_hash
   h[:root] = :unknown_root
   h.to_json.to_s
 end
 
 def missing_files_amqp_request
-  h = valid_amqp_request_hash
+  h = valid_request_hash
   h[:targets] = [{type: :file, path: :missing_file_name}]
   h.to_json.to_s
 end

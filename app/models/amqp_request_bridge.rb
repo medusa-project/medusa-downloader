@@ -1,4 +1,4 @@
-class AmqpRequestBridge < Object
+class AmqpRequestBridge < AbstractRequestBridge
 
   def self.create_request(amqp_message)
     from_message(amqp_message).tap do |request|
@@ -20,44 +20,6 @@ class AmqpRequestBridge < Object
     Rails.logger.error "Unknown error for incoming message: #{amqp_message}"
   end
 
-  def self.from_message(unparsed_message)
-    parsed_message = JSON.parse(unparsed_message).with_indifferent_access
-    ActiveRecord::Base.transaction do
-      make_request(parsed_message)
-    end
-  end
-
-  def self.make_request(json)
-    check_parameters(json)
-    id = generate_id
-    Request.create!(client_id: json[:client_id], return_queue: json[:return_queue],
-                    root: json[:root], zip_name: zip_name(json, id), timeout: timeout(json), targets: json[:targets],
-                    status: 'pending', downloader_id: id)
-  end
-
-  def self.zip_name(json, default)
-    json[:zip_name] || default
-  end
-
-  def self.timeout(json)
-    [[json[:timeout], 1].compact.max, default_timeout].min
-  end
-
-  def self.default_timeout
-    14
-  end
-
-  def self.generate_id
-    SecureRandom.hex(4).tap do |id|
-      Request.find_by(downloader_id: id).present? ? generate_id : id
-    end
-  end
-
-  def self.check_parameters(json)
-    raise Request::NoReturnQueue unless json[:return_queue].present?
-    raise Request::NoClientId unless json[:client_id].present?
-    raise Request::InvalidRoot unless StorageRoot.find(json[:root])
-  end
 
   def self.send_invalid_root_error(amqp_message)
     parsed_message = JSON.parse(amqp_message).with_indifferent_access
@@ -82,15 +44,7 @@ class AmqpRequestBridge < Object
   end
 
   def self.send_request_received_ok(request)
-    message = {
-        action: 'request_received',
-        client_id: request.client_id,
-        status: 'ok',
-        id: request.downloader_id,
-        download_url: request.download_url,
-        status_url: request.status_url
-    }
-    AmqpConnector.instance.send_message(request.return_queue, message)
+    AmqpConnector.instance.send_message(request.return_queue, request_received_ok_message(request))
   end
 
   def self.send_invalid_file_error(error, request)
@@ -102,5 +56,14 @@ class AmqpRequestBridge < Object
     AmqpConnector.instance.send_message(request.return_queue, message)
   end
 
+  def self.check_parameters(json)
+    super(json)
+    raise Request::NoReturnQueue unless json[:return_queue].present?
+    raise Request::NoClientId unless json[:client_id].present?
+  end
+
+  def self.request_received_ok_message(request)
+    super(request).merge(client_id: request.client_id, action: 'request_received')
+  end
 
 end

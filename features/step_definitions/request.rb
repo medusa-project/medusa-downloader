@@ -54,11 +54,18 @@ Then(/^a request should exist with status '(.*)'$/) do |status|
 end
 
 Given(/^a valid HTTP request is received$/) do
-  pending # express the regexp above with the code you wish you had
+  header 'Content-Type', 'application/json'
+  post create_download_path, valid_request_hash.to_json.to_s
+  @request = Request.first
 end
 
 And(/^an HTTP response should be received indicating success$/) do
-  pending # express the regexp above with the code you wish you had
+  expect(last_response.status).to eql(201)
+  message = JSON.parse(last_response.body)
+  expect(message['id']).to eql(@request.downloader_id)
+  expect(message['status']).to eql('ok')
+  expect(message['download_url']).to eql(@request.download_url)
+  expect(message['status_url']).to eql(@request.status_url)
 end
 
 def valid_request_hash

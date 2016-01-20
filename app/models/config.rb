@@ -41,4 +41,8 @@ class Config < Object
     config[:storage]
   end
 
+  def auth
+    config[:auth]
+  end
+
 end

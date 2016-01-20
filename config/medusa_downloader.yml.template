@@ -25,3 +25,7 @@ test:
   amqp:
     port: 5672
   nginx_url: http://localhost:8080
+  auth:
+    realm: request_creators
+    users:
+      user: password

@@ -1,6 +1,7 @@
 class DownloadsController < ApplicationController
 
   before_filter :get_request, only: %i(get status manifest)
+  before_filter :authenticate, only: :create
 
   def get
     if @request.ready?
@@ -50,5 +51,10 @@ class DownloadsController < ApplicationController
     end
   end
 
+  def authenticate
+    authenticate_or_request_with_http_digest(Config.auth[:realm]) do |user|
+      Config.auth[:users][user]
+    end
+  end
 
 end

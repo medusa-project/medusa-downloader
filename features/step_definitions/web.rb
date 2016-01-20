@@ -45,3 +45,10 @@ Then(/^I should get the manifest for a valid request$/) do
   expect(page.body).to eql(File.read(request.manifest_path))
 end
 
+Given(/^I authenticate$/) do
+  digest_authorize 'user', 'password'
+end
+
+Then(/^I should be unauthorized$/) do
+  expect(last_response.status).to eql(401)
+end

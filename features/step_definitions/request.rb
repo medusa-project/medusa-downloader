@@ -53,6 +53,10 @@ Then(/^a request should exist with status '(.*)'$/) do |status|
   expect(Request.find_by(status: status)).to be_present
 end
 
+Then(/^no request should have been generated$/) do
+  expect(Request.count).to eql(0)
+end
+
 Given(/^a valid HTTP request is received$/) do
   header 'Content-Type', 'application/json'
   post create_download_path, valid_request_hash.to_json.to_s
@@ -68,6 +72,38 @@ And(/^an HTTP response should be received indicating success$/) do
   expect(message['status_url']).to eql(@request.status_url)
 end
 
+Given(/^an unparseable HTTP request is received$/) do
+  post create_download_path, 'invalid_json'
+end
+
+Then(/^an HTTP response should be received indicating an unparseable request$/) do
+  expect(last_response.status).to eql(400)
+  message = JSON.parse(last_response.body)
+  expect(message['error']).to eql('Unable to parse request body')
+end
+
+Given(/^an invalid root but parseable HTTP request is received$/) do
+  header 'Content-Type', 'application/json'
+  post create_download_path, invalid_root_request_hash.to_json.to_s
+end
+
+Then(/^an HTTP response should be received indicating an invalid root$/) do
+  expect(last_response.status).to eql(400)
+  message = JSON.parse(last_response.body)
+  expect(message['error']).to match('Invalid root')
+end
+
+Given(/^a missing files but parseable HTTP request is received$/) do
+  header 'Content-Type', 'application/json'
+  post create_download_path, missing_files_amqp_request
+end
+
+And(/^an HTTP response should be received indicating missing files$/) do
+  expect(last_response.status).to eql(400)
+  message = JSON.parse(last_response.body)
+  expect(message['error']).to match('Invalid or missing file')
+end
+
 def valid_request_hash
   {action: :export,
    client_id: :client_id,
@@ -79,14 +115,18 @@ def valid_request_hash
    ]}.clone
 end
 
+def invalid_root_request_hash
+  valid_request_hash.tap do |h|
+    h[:root] = :unknown_root
+  end
+end
+
 def valid_amqp_request
   valid_request_hash.to_json.to_s
 end
 
 def invalid_root_amqp_request
-  h = valid_request_hash
-  h[:root] = :unknown_root
-  h.to_json.to_s
+  invalid_root_request_hash.to_json.to_s
 end
 
 def missing_files_amqp_request

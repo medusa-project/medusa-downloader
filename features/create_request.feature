@@ -22,3 +22,19 @@ Feature: Create download request
     Then a request should exist with status 'ready'
     And a manifest should have been generated
     And an HTTP response should be received indicating success
+
+  Scenario: Invalid, unparseable HTTP request fails
+    Given an unparseable HTTP request is received
+    Then no request should have been generated
+    And an HTTP response should be received indicating an unparseable request
+
+  Scenario: Invalid root but parseable HTTP request fails
+    Given an invalid root but parseable HTTP request is received
+    Then no request should have been generated
+    And an HTTP response should be received indicating an invalid root
+
+  Scenario: Missing files HTTP request fails
+    Given a missing files but parseable HTTP request is received
+    Then no request should have been generated
+    And an HTTP response should be received indicating missing files
+

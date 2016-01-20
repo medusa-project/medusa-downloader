@@ -25,18 +25,20 @@ class DownloadsController < ApplicationController
   end
 
   def create
-    json_string = request.body.read
-    request = HttpRequestBridge.create_request(json_string)
-    request.generate_manifest_and_links
-    render json: HttpRequestBridge.request_received_ok_message(request).to_json, status: 201
+    Request.transaction do
+      json_string = request.body.read
+      req = HttpRequestBridge.create_request(json_string)
+      req.generate_manifest_and_links
+      render json: HttpRequestBridge.request_received_ok_message(req).to_json, status: 201
+    end
   rescue JSON::ParserError
-    'something'
+    render json: {error: 'Unable to parse request body'}.to_json, status: 400
   rescue Request::InvalidRoot
-    'something'
+    render json: {error: 'Invalid root'}.to_json, status: 400
   rescue InvalidFileError
-    'something'
+    render json: {error: 'Invalid or missing file'}.to_json, status: 400
   rescue Exception
-    'something'
+    render json: {error: 'Unknown error'}.to_json, status: 500
   end
 
   protected

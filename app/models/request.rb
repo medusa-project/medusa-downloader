@@ -59,8 +59,9 @@ class Request < ActiveRecord::Base
     end
     self.status = 'ready'
     self.save!
-  rescue InvalidFileError => e
-    AmqpRequestBridge.send_invalid_file_error(e, self)
+  end
+
+  def set_status_for_missing_or_invalid_targets
     File.delete(manifest_path) if File.exist?(manifest_path)
     self.status = 'missing_or_invalid_targets'
     self.save!

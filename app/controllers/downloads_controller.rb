@@ -33,6 +33,8 @@ class DownloadsController < ApplicationController
     'something'
   rescue Request::InvalidRoot
     'something'
+  rescue InvalidFileError
+    'something'
   rescue Exception
     'something'
   end

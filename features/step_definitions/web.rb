@@ -37,7 +37,7 @@ Then(/^I should see '(.*)'$/) do |text|
 end
 
 And(/^I should see a download zip link$/) do
-  expect(page.body).to match('Download Zip')
+  expect(page.body).to match('Get Zip')
 end
 
 Then(/^I should get the manifest for a valid request$/) do

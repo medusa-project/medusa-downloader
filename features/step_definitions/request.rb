@@ -70,7 +70,7 @@ And(/^an HTTP response should be received indicating success$/) do
   expect(message['status']).to eql('ok')
   expect(message['download_url']).to eql(@request.download_url)
   expect(message['status_url']).to eql(@request.status_url)
-  expect(message['size'].to_d).to be > 0
+  expect(message['approximate_size'].to_d).to be > 0
 end
 
 Given(/^an unparseable HTTP request is received$/) do

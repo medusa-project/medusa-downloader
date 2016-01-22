@@ -5,7 +5,7 @@ class HttpRequestBridge < AbstractRequestBridge
   end
 
   def self.request_received_ok_message(request)
-    super(request).merge(size: request.total_size)
+    super(request).merge(approximate_size: request.total_size)
   end
 
 end

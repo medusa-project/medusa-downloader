@@ -66,7 +66,8 @@ fields. Fields are mandatory unless noted.
 4. request_completed (server to client)
     * action 'request_completed'
     * id - string - id of the request
-    * deletion_time - string - when the request will be deleted and the content will no longer be available
+    * deletion_time (optional) - string - when the request will be deleted and the content will no longer be available - 
+      in the process of rethinking this since we don't actually create the zips now
     * download_url - same as request_received
     * status_url - same as request_received
     

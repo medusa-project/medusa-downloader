@@ -56,6 +56,10 @@ class AmqpRequestBridge < AbstractRequestBridge
     AmqpConnector.instance.send_message(request.return_queue, message)
   end
 
+  def self.send_request_completed(request)
+    AmqpConnector.instance.send_message(request.return_queue, request_completed_message(request))
+  end
+
   def self.check_parameters(json)
     super(json)
     raise Request::NoReturnQueue unless json[:return_queue].present?
@@ -64,6 +68,15 @@ class AmqpRequestBridge < AbstractRequestBridge
 
   def self.request_received_ok_message(request)
     super(request).merge(client_id: request.client_id, action: 'request_received')
+  end
+
+  def self.request_completed_message(request)
+    {
+      action: 'request_completed',
+      id: request.downloader_id,
+      download_url: request.download_url,
+      status_url: request.status_url
+    }
   end
 
 end

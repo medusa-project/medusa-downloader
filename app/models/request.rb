@@ -49,9 +49,11 @@ class Request < ActiveRecord::Base
     FileUtils.mkdir_p(File.dirname(manifest_path))
     FileUtils.mkdir_p(data_path)
     generate_file_list
+    self.total_size = 0
     File.open(manifest_path, 'wb') do |f|
       self.file_list.each.with_index do |spec, i|
         path, zip_path, size = spec
+        self.total_size += size
         symlink_path = File.join(data_path, i.to_s)
         FileUtils.symlink(path, symlink_path)
         f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{zip_name}/#{zip_path}\r\n"

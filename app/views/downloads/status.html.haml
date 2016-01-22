@@ -6,3 +6,8 @@
   %div
     %strong Download:
     = link_to 'Get Zip', @request.download_url
+
+- if @request.total_size.present?
+  %div
+    %strong Approximate Size:
+    = number_to_human_size(@request.total_size)

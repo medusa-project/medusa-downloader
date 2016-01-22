@@ -75,7 +75,8 @@ class AmqpRequestBridge < AbstractRequestBridge
       action: 'request_completed',
       id: request.downloader_id,
       download_url: request.download_url,
-      status_url: request.status_url
+      status_url: request.status_url,
+      size: request.total_size
     }
   end
 

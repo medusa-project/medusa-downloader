@@ -70,6 +70,9 @@ fields. Fields are mandatory unless noted.
       in the process of rethinking this since we don't actually create the zips now
     * download_url - same as request_received
     * status_url - same as request_received
+    * size - approximate size of the download. Note that this is computed by adding up the
+      size of the component files and ignores the overhead of placing them in a zip. Use caution
+      if you display this, since it will _not_ be the size of the file the users winds up with.
     
 Other messages that may be implemented in the future: delete_request, status
 

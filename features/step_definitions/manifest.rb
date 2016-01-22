@@ -16,6 +16,7 @@ And(/^a completion message should have been sent$/) do
     expect(message['id']).to eql(@request.downloader_id)
     expect(message['download_url']).to eql(@request.download_url)
     expect(message['status_url']).to eql(@request.status_url)
+    expect(message['size'].to_d).to be > 0
   end
 end
 

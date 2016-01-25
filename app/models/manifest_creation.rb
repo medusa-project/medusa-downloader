@@ -8,6 +8,7 @@ class ManifestCreation < ActiveRecord::Base
 
   def perform
     self.request.generate_manifest_and_links
+    AmqpRequestBridge.send_request_completed(request)
   rescue InvalidFileError => e
     AmqpRequestBridge.send_invalid_file_error(e, request)
     request.set_status_for_missing_or_invalid_targets

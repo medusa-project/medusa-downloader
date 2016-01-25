@@ -19,7 +19,7 @@ if defined?(PhusionPassenger)
           end
         end
       rescue Exception => e
-        Rails.logger.error "Unknown erorr starting AMQP listener: #{e}"
+        Rails.logger.error "Unknown error starting AMQP listener: #{e}"
       end
     end
   end

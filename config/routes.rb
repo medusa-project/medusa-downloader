@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
+  root 'help#show'
+
   get 'downloads/:id/status' => 'downloads#status', as: :status
   get 'downloads/:id/get' => 'downloads#get', as: :get
   get 'downloads/:id/manifest' => 'downloads#manifest', as: :manifest

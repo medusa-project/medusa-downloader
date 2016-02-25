@@ -88,6 +88,7 @@ GEM
       mime-types (>= 1.16, < 3)
       nokogiri (~> 1.5)
       rails (>= 3, < 5)
+    daemons (1.2.3)
     database_cleaner (1.5.1)
     debug_inspector (0.0.2)
     delayed_job (4.1.1)
@@ -287,6 +288,7 @@ DEPENDENCIES
   coffee-rails (~> 4.1.0)
   connection_pool
   cucumber-rails
+  daemons
   database_cleaner
   delayed_job_active_record
   factory_girl
@@ -314,4 +316,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.10.6
+   1.11.2

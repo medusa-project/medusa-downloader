@@ -4,11 +4,13 @@ lock '3.4.0'
 set :application, 'medusa-downloader'
 set :repo_url, 'https://github.com/medusa-project/medusa-downloader.git'
 
+set :home, '/services/medusa'
+set :deploy_to, "#{fetch(:home)}/medusa-downloader-capistrano"
+set :bin, "#{fetch(:home)}/bin"
+set :rails_env, 'production'
+
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
-
-# Default deploy_to directory is /var/www/my_app_name
-# set :deploy_to, '/var/www/my_app_name'
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -51,4 +53,14 @@ namespace :deploy do
     end
   end
 
+end
+
+def execute_rake(task)
+  on roles(:app) do
+    within release_path do
+      with rails_env: fetch(:rails_env) do
+        execute :rake, task
+      end
+    end
+  end
 end

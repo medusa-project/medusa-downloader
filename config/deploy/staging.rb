@@ -8,6 +8,9 @@
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 
 
+server 'fedora-dev.library.illinois.edu', user: 'medusa', roles: %w(web app db), primary: true
+ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+
 
 # role-based syntax
 # ==================

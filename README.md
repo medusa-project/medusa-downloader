@@ -85,8 +85,8 @@ AMQP interface. Generally this should only be used when the request
 is for a small number of files and hence can be completed quickly.
 
 The client must provide http digest credentials. These are configured
-in the config/medusa_downloader.yml. The path to create a download is
-/downloads/create.
+in the config/medusa_downloader.yml, as is the realm to be used.
+The path to create a download is /downloads/create.
 
 The request should be a post with the body a string parseable as JSON.
 The format of the JSON is the same as for an AMQP request , with the 

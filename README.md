@@ -78,7 +78,30 @@ Other messages that may be implemented in the future: delete_request, status
 
 ## Web interface
 
-This isn't completely defined yet, but users will be able to check on the status of a request. Requests should generally
+### Creation
+
+Trusted users can create a request via a web interface rather than the 
+AMQP interface. Generally this should only be used when the request
+is for a small number of files and hence can be completed quickly.
+
+The client must provide http digest credentials. These are configured
+in the config/medusa_downloader.yml, as is the realm to be used.
+The path to create a download is /downloads/create.
+
+The request should be a post with the body a string parseable as JSON.
+The format of the JSON is the same as for an AMQP request , with the 
+following changes. The action is not necessary, as this
+is implicit in the URL. The return_queue and client_id are not necessary,
+as these exist only to facilitate the asynchronous action via AMQP.
+
+The response will again be a JSON parseable string in the format 
+of the AMQP response. On success a 201 will be returned with this message.
+On a failure a 400 or 500 will be returned with a JSON object giving a short 
+error message in the 'error' field.
+
+### Status
+
+Users will be able to check on the status of a request using the status url provided. Requests should generally
 result in something downloadable fairly quickly, but the downloader does need to run through all the targets, confirm
 they are valid, and make a manifest. This may take a little time for large numbers of files, whether requested directly
 or through directory targets. These requests will be proxied through nginx to the downloader.
@@ -88,6 +111,8 @@ and headers that direct nginx to deliver a zip archive. So the downloader's part
 Nginx will handle the bulk of the work based on the manifest. If the file system has changed after the generation of the
 manifest there could be errors here, but there's not really a good way to deal with them. By and large there shouldn't be
 changes to the permanently stored content.
+
+
 
 ## Extraction
 

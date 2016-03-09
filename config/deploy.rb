@@ -42,8 +42,7 @@ namespace :deploy do
   namespace :deploy do
     task :restart do
       on roles(:web) do
-        execute 'monit restart medusa-downloader-rails'
-        execute 'monit restart medusa-downloader-delayed-job'
+        execute 'monit -g medusa restart'
       end
     end
   end

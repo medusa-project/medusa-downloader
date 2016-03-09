@@ -47,7 +47,6 @@ group :development do
   gem 'capistrano-rails', group: :development
   gem 'capistrano-bundler'
   gem 'capistrano-rvm'
-  gem 'capistrano3-monit', github: 'naps62/capistrano3-monit'
 end
 
 group :test do

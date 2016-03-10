@@ -29,7 +29,12 @@ class Request < ActiveRecord::Base
   end
 
   def storage_path
-    File.join(Config.instance.storage_path, self.downloader_id)
+    File.join(Config.instance.storage_path, relative_storage_path)
+  end
+
+  def relative_storage_path
+    prefix_dirs = downloader_id.first(6).chars.in_groups_of(2).collect(&:join)
+    File.join(*prefix_dirs, downloader_id)
   end
 
   def manifest_path

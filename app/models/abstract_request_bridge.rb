@@ -32,7 +32,7 @@ class AbstractRequestBridge < Object
   end
 
   def self.generate_id
-    SecureRandom.hex(4).tap do |id|
+    SecureRandom.hex(24).tap do |id|
       Request.find_by(downloader_id: id).present? ? generate_id : id
     end
   end

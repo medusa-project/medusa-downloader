@@ -61,7 +61,8 @@ class Request < ActiveRecord::Base
         self.total_size += size
         symlink_path = File.join(data_path, i.to_s)
         FileUtils.symlink(path, symlink_path)
-        f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{zip_name}/#{zip_path}\r\n"
+        final_path = "#{zip_name}/#{zip_path}".gsub(/\/+/, '/')
+        f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{final_path}\r\n"
       end
     end
     self.status = 'ready'
@@ -113,7 +114,7 @@ class Request < ActiveRecord::Base
     dir.find.each do |descendant|
       next if descendant == dir
       if descendant.file?
-        zip_file_path = File.join(zip_path, descendant.to_s.sub(/^#{dir.to_s}\//, '')).gsub(/^\/+/, '')
+        zip_file_path = File.join(zip_path, descendant.to_s.sub(/^#{dir.to_s}\//, ''))
         size = descendant.size
         self.file_list << [descendant.to_s, zip_file_path, size]
       else

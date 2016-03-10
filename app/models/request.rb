@@ -113,7 +113,7 @@ class Request < ActiveRecord::Base
     dir.find.each do |descendant|
       next if descendant == dir
       if descendant.file?
-        zip_file_path = File.join(zip_path, descendant.to_s.sub(/^#{dir.to_s}\//, ''))
+        zip_file_path = File.join(zip_path, descendant.to_s.sub(/^#{dir.to_s}\//, '')).gsub(/^\/+/, '')
         size = descendant.size
         self.file_list << [descendant.to_s, zip_file_path, size]
       else

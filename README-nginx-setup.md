@@ -26,3 +26,7 @@ The internal directive means that nginx alone is allowed to access these locatio
 manifest and finds /internal/download_id/path it looks in its web root for /internal/download_id/path and because 
 of how we set up the symlink it finds download_id/path under the storage for medusa-downloader. Note that this path
 will again be a symlink to the actual content on the filesystem. So all this must be readable by nginx.
+
+Note that you might also want to use nginx to restrict access to the
+/downloads/create location - see nginx documentation for ways to do 
+this using standard http authentication methods.

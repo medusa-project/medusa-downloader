@@ -27,5 +27,6 @@ test:
   nginx_url: http://localhost:8080
   auth:
     realm: request_creators
+    active: true
     users:
       user: password

@@ -59,7 +59,7 @@ end
 
 Given(/^a valid HTTP request is received$/) do
   header 'Content-Type', 'application/json'
-  post create_download_path, valid_request
+  post create_download_path, valid_http_request
   @request = Request.first
 end
 
@@ -116,6 +116,13 @@ def valid_request_hash
    ]}.clone
 end
 
+def valid_http_request_hash
+  valid_request_hash.tap do |h|
+    h.delete(:return_queue)
+    h.delete(:client_id)
+  end
+end
+
 def invalid_root_request_hash
   valid_request_hash.tap do |h|
     h[:root] = :unknown_root
@@ -124,6 +131,10 @@ end
 
 def valid_request
   valid_request_hash.to_json.to_s
+end
+
+def valid_http_request
+  valid_http_request_hash.to_json.to_s
 end
 
 def invalid_root_request

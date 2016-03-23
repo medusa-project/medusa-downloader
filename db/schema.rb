@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160122160727) do
+ActiveRecord::Schema.define(version: 20160323174431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,8 +41,8 @@ ActiveRecord::Schema.define(version: 20160122160727) do
   add_index "manifest_creations", ["request_id"], name: "index_manifest_creations_on_request_id", using: :btree
 
   create_table "requests", force: :cascade do |t|
-    t.string   "client_id",     null: false
-    t.string   "return_queue",  null: false
+    t.string   "client_id"
+    t.string   "return_queue"
     t.string   "root",          null: false
     t.string   "zip_name",      null: false
     t.integer  "timeout",       null: false

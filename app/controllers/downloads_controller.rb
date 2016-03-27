@@ -1,7 +1,9 @@
 class DownloadsController < ApplicationController
 
   before_filter :get_request, only: %i(get status manifest)
-  before_filter :authenticate, only: :create
+  if Config.instance.auth_active?
+    before_filter :authenticate, only: :create
+  end
   skip_before_filter :verify_authenticity_token, only: :create
   
   def get

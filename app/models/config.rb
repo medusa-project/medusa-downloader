@@ -45,4 +45,8 @@ class Config < Object
     config[:auth]
   end
 
+  def auth_active?
+    config[:auth][:active]
+  end
+
 end

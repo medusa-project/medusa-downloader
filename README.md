@@ -80,13 +80,23 @@ Other messages that may be implemented in the future: delete_request, status
 
 ### Creation
 
-Trusted users can create a request via a web interface rather than the 
+Users can create a request via a web interface rather than the 
 AMQP interface. Generally this should only be used when the request
 is for a small number of files and hence can be completed quickly.
 
-The client must provide http digest credentials. These are configured
-in the config/medusa_downloader.yml, as is the realm to be used.
-The path to create a download is /downloads/create.
+The path for creation is /downloads/create. 
+It is recommended that you restrict this in some way to trusted users.
+If you set 'active' to true in the auth section of the
+config/medusa_downloader.yml file then the client must provide http
+digest credentials. The realm and users/passwords are also configured
+there in this case - see the template file
+
+Alternately you can set 'active' to false and enforce authentication
+somewhere else - since this application presupposes proxying by nginx
+that is also a fine place to do it.
+
+If you want this feature to be turned off you can simply activate
+authentication on the rails side and have no users.
 
 The request should be a post with the body a string parseable as JSON.
 The format of the JSON is the same as for an AMQP request , with the 
@@ -94,9 +104,9 @@ following changes. The action is not necessary, as this
 is implicit in the URL. The return_queue and client_id are not necessary,
 as these exist only to facilitate the asynchronous action via AMQP.
 
-The response will again be a JSON parseable string in the format 
-of the AMQP response. On success a 201 will be returned with this message.
-On a failure a 400 or 500 will be returned with a JSON object giving a short 
+The response will again be a JSON parseable string in the format of the AMQP
+response. On success a 201 will be returned with this message. On a
+failure a 400 or 500 will be returned with a JSON object giving a short
 error message in the 'error' field.
 
 ### Status

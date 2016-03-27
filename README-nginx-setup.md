@@ -1,7 +1,7 @@
 # nginx setup
 
 It is necessary to have nginx with the mod_zip module installed. This application works by creating the manifests
-necessary for nginx+mod_zip to create zip files on the fly. 
+necessary for nginx+mod_zip to create zip files on the fly.
 
 The nginx configuration needed is fairly simple. First, we have to proxy through urls prefaced with /downloads to
 this rails app with a section like:
@@ -26,3 +26,17 @@ The internal directive means that nginx alone is allowed to access these locatio
 manifest and finds /internal/download_id/path it looks in its web root for /internal/download_id/path and because 
 of how we set up the symlink it finds download_id/path under the storage for medusa-downloader. Note that this path
 will again be a symlink to the actual content on the filesystem. So all this must be readable by nginx.
+
+Note that you might also want to use nginx to restrict access to the
+/downloads/create location - see nginx documentation for ways to do 
+this using standard http authentication methods. To use this you'll
+also need to install the nginx-http-auth-digest module 
+(https://github.com/atomx/nginx-http-auth-digest) in nginx. A
+sample config section:
+
+    location /downloads/create {
+        auth_digest 'request_creators';
+        auth_digest_user_file /etc/nginx/conf/digest_users;
+        proxy_pass http://localhost:3000/downloads/create;
+    }
+    

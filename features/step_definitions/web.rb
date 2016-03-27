@@ -9,27 +9,27 @@ Then(/^the manifest should not be ready$/) do
 end
 
 When(/^I visit the status url for a missing archive$/) do
-  visit(status_path(id: 'bad_id'))
+  visit(status_path(id: 'bad_id', root: 'test'))
 end
 
 When(/^I visit the download url for a missing archive$/) do
-  visit(get_path(id: 'bad_id'))
+  visit(get_path(id: 'bad_id', root: 'test'))
 end
 
 When(/^I visit the manifest url for a missing archive$/) do
-  visit(manifest_path(id: 'bad_id'))
+  visit(manifest_path(id: 'bad_id', root: 'test'))
 end
 
 When(/^I visit the download url for a valid request$/) do
-  visit(get_path(id: @request.downloader_id))
+  visit(get_path(id: @request.downloader_id, root: 'test'))
 end
 
 When(/^I visit the manifest url for a valid request$/) do
-  visit(manifest_path(id: @request.downloader_id))
+  visit(manifest_path(id: @request.downloader_id, root: 'test'))
 end
 
 When(/^I visit the status url for a valid request$/) do
-  visit(status_path(id: @request.downloader_id))
+  visit(status_path(id: @request.downloader_id, root: 'test'))
 end
 
 Then(/^I should see '(.*)'$/) do |text|

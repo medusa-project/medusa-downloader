@@ -48,7 +48,8 @@ class DownloadsController < ApplicationController
 
   def get_request
     @request = Request.find_by(downloader_id: params[:id])
-    if @request.blank?
+    #TODO require root
+    if @request.blank? or (params[:root] != @request.root)
       render status: :not_found, plain: 'Requested archive not found'
     end
   end

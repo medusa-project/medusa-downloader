@@ -13,15 +13,15 @@ class Request < ActiveRecord::Base
   after_destroy :delete_manifest_and_links
 
   def download_url
-    "#{Config.nginx_url}/downloads/#{downloader_id}/get"
+    "#{Config.nginx_url}/downloads/#{root}/#{downloader_id}/get"
   end
 
   def status_url
-    "#{Config.nginx_url}/downloads/#{downloader_id}/status"
+    "#{Config.nginx_url}/downloads/#{root}/#{downloader_id}/status"
   end
 
   def manifest_url
-    "#{Config.nginx_url}/downloads/#{downloader_id}/manifest"
+    "#{Config.nginx_url}/downloads/#{root}/#{downloader_id}/manifest"
   end
 
   def has_manifest?

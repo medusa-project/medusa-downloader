@@ -24,7 +24,7 @@ Then(/^an error message should be sent to the return queue$/) do
 end
 
 And(/^a missing files message should have been sent$/) do
-  step "an acknowlegement message should be sent to the return queue"
+  step 'an acknowlegement message should be sent to the return queue'
   AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
     expect(message['action']).to eql('error')
     expect(message['id']).to eql(@request.downloader_id)

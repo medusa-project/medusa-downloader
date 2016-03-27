@@ -7,7 +7,7 @@ if defined?(PhusionPassenger)
         Kernel.at_exit do
           connection.close rescue nil
         end
-        Rails.logger.error "Starting AMQP listener"
+        Rails.logger.error 'Starting AMQP listener'
         channel = connection.create_channel
         queue = channel.queue(Config.instance.incoming_queue, durable: true)
         queue.subscribe do |delivery_info, properties, payload|

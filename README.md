@@ -2,12 +2,21 @@
 
 ## Introduction
 
-This rails application will combine with an nginx server running mod_zip to allow streamable zip downloads of medusa
+This rails application will combine with an nginx server running mod_zip 
+and another nginx server (optionally any server capable of serving 
+static content - this application can do it if properly configured, but
+nginx is much faster) to allow streamable zip downloads of medusa
 content.
 
-The nginx server will have an internal location that can access medusa content via links produced by this application. 
-It will have an external location that proxies through to this application, which will produce manifests that mod_zip 
-can use to stream the content.
+This application produces packages on the file system and manifests for
+the packages suitable for nginx mod_zip. The mod_zip nginx server 
+proxies this application and gets these manifests. In turn, it calls
+out to the second nginx server to actually get the files from the 
+filesystem, which it packages and streams. (This is not done 
+with a single nginx server because of difficulties with open file 
+limits - it appears that internally serving the files directly from
+the mod_zip server does not close them in time, whereas making the
+requests go to an external server does.)
 
 Client applications will send AMQP requests to this application to get it to produce manifests for desired content by
 naming that content relative to some 'root' directory that both the client and downloader know about. The downloader

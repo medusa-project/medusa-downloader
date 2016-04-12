@@ -131,8 +131,6 @@ Nginx will handle the bulk of the work based on the manifest. If the file system
 manifest there could be errors here, but there's not really a good way to deal with them. By and large there shouldn't be
 changes to the permanently stored content.
 
-
-
 ## Extraction
 
 This application in conjunction with nginx produces archives in the 
@@ -149,3 +147,28 @@ homebrew as 7z or probably as a more normal Mac download from the 7zip
 website) and The Unarchiver (available through the app store or in more
 featureful form through its own website).
 
+## Request flow
+
+This is to make clear exactly what happens when a download is done
+ in case other explanations are confusing.
+ 
+1. User hits /downloads/<root>/<id>/get
+2. Mod-zip nginx proxies to Rails
+3. Rails returns manifest to mod-zip nginx along with header to 
+   tell mod-zip nginx to create zip from manifest
+4. For each line of the manifest mod-zip nginx makes an internal call
+    to the location indicated in that line
+5. This location is configured to proxy the file-serving nginx, which
+   serves the content for that file back to the mod-zip nginx, which
+   incorporates it into the zip
+6. When all lines of the manifest have been done the mod-zip nginx
+   finishes the zip
+7. As 4-6 are happening the zip is being streamed back to the user.
+
+We originally had only the mod-zip nginx. Instead of a call out to
+the file-serving nginx we just served the file contents directly
+from the mod-zip nginx to itself as the zip was created. However, doing
+this internally to the mod-zip nginx gave us problem with open
+file limits on the OS, which we speculate was because mod_zip/nginx
+wasn't closing the files until the whole zip was sent. Going to an
+external request for the file content seems to have solved this problem.

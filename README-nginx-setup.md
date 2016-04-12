@@ -64,6 +64,12 @@ manifest and finds /internal/download_id/path it looks in its web root for /inte
 This section proxies this through to the file-serving nginx which then returns
 the file content.
 
+You may also wish to increase timeouts such as keepalive_timeout, 
+send_timeout, and proxy_read_timeout in the configuration for the 
+mod_zip nginx. Additionally if the OS limits for open file descriptors 
+are low for the system or the user running the nginx processes 
+it is beneficial to increase those.
+
 If you wish it is possible to set things up so that this application or
 another web server fills the role of the file-serving nginx. Just make sure
 that when the above /internal location is hit that the proxied server

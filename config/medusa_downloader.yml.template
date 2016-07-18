@@ -19,7 +19,7 @@ test:
     domain: libstfsdg01.library.illinois.edu
   roots:
     - name: test
-      path: <%= Rails.root %>/features/fixtures/content_root
+      path: <%= Rails.root %>/features/fixtures/content_root_link
   storage: <%= Rails.root %>/tmp/test_storage
   incoming_queue: client_to_downloader_test
   amqp:

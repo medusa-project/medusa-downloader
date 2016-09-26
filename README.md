@@ -54,6 +54,8 @@ fields. Fields are mandatory unless noted.
               be located in that directory. Directories (recursive or not) will be a directory in that directory. By default
               everything just goes in the top level of the zip. The zip will uncompress to a directory based on the zip_name.
               E.g. something like 'data.zip' will unzip to a 'data' directory with content by default in that directory.
+            * name - string (optional, default File.basename(path)) - applies only to files. May be used to rename a file
+              in the zip. 
 2. request_received (server to client)
     * action - 'request_received'
     * client_id - string - the client_id that the client sent in the export message

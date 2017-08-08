@@ -4,8 +4,6 @@ lock '3.4.0'
 set :application, 'medusa-downloader'
 set :repo_url, 'https://github.com/medusa-project/medusa-downloader.git'
 
-set :home, '/services/medusa'
-set :deploy_to, "#{fetch(:home)}/medusa-downloader-capistrano"
 set :bin, "#{fetch(:home)}/bin"
 set :rails_env, 'production'
 

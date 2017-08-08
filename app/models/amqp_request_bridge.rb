@@ -16,8 +16,9 @@ class AmqpRequestBridge < AbstractRequestBridge
   rescue Request::InvalidRoot
     Rails.logger.error "Invalid root for incoming message: #{amqp_message}"
     send_invalid_root_error(amqp_message)
-  rescue Exception
+  rescue Exception => e
     Rails.logger.error "Unknown error for incoming message: #{amqp_message}"
+    Rails.logger "#{e}"
   end
 
 

@@ -27,7 +27,7 @@ class DownloadsController < ApplicationController
           dash, size, content_path, zip_path = line.split(' ', 4)
           content_path.gsub!(/^\/internal\//, '')
           zip.write_stored_file(zip_path) do |target|
-            File.open(File.join(Config.instance.storage_path, content_path)) do |source|
+            File.open(File.join(Config.instance.storage_path, content_path), 'rb') do |source|
               IO.copy_stream(source, target)
             end
           end

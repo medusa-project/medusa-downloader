@@ -2,7 +2,7 @@ class DownloadsController < ApplicationController
 
   # include ActionController::Live
   # include ZipTricks::RailsStreaming
-  include ActionController::Streaming 
+  include ActionController::Streaming
   include Zipline
 
   before_filter :get_request, only: %i(get status manifest download)
@@ -50,7 +50,7 @@ class DownloadsController < ApplicationController
         dash, size, content_path, zip_path = line.split(' ', 4)
         content_path.gsub!(/^\/internal\//, '')
         real_path = File.join(Config.instance.storage_path, content_path)
-        [real_path, zip_path]
+        [File.new(real_path), zip_path]
       end
       zipline(files, "#{@request.zip_name}.zip")
     else

@@ -33,6 +33,7 @@ gem 'twitter-bootstrap-rails'
 gem 'font-awesome-rails'
 gem 'rpairtree', require: 'pairtree'
 gem 'zip_tricks'
+gem 'zipline'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

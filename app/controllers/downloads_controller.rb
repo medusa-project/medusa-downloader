@@ -1,6 +1,9 @@
 class DownloadsController < ApplicationController
 
-  before_filter :get_request, only: %i(get status manifest)
+  include ActionController::Live
+  include ZipTricks::RailsStreaming
+
+  before_filter :get_request, only: %i(get status manifest download)
   if Config.instance.auth_active?
     before_filter :authenticate, only: :create
   end
@@ -10,6 +13,26 @@ class DownloadsController < ApplicationController
     if @request.ready?
       response.headers['X-Archive-Files'] = 'zip'
       send_file @request.manifest_path, disposition: :attachment, filename: "#{@request.zip_name}.zip"
+    else
+      render status: :not_found, plain: 'Manifest is not yet ready for this archive'
+    end
+  end
+
+  def download
+    if @request.ready?
+      manifest = File.open(@request.manifest_path)
+      zip_tricks_stream do |zip|
+        manifest.each_line do |line|
+          line.chomp!
+          dash, size, content_path, zip_path = line.split(' ', 4)
+          content_path.gsub!(/^\/internal\//, '')
+          zip.write_stored_file(zip_path) do |target|
+            File.open(File.join(Config.instance.storage_path, content_path)) do |source|
+              IO.copy_stream(source, target)
+            end
+          end
+        end
+      end
     else
       render status: :not_found, plain: 'Manifest is not yet ready for this archive'
     end

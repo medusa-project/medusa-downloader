@@ -13,6 +13,12 @@ set :bundle_path, nil
 
 server 'fedora-prod.library.illinois.edu', user: 'medusa', roles: %w(web app db), primary: true
 
+#set :home, '/home/lib-medusa-downloader'
+#set :deploy_to, "#{fetch(:home)}/medusa-downloader-capistrano"
+#set :bundle_path, nil
+
+#server 'fedora-prod.library.illinois.edu', user: 'lib-medusa-downloader', roles: %w(web app db), primary: true
+
 
 # role-based syntax
 # ==================

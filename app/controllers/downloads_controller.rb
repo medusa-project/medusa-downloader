@@ -30,7 +30,7 @@ class DownloadsController < ApplicationController
           zip.write_stored_file(zip_path) do |target|
             real_path = File.join(Config.instance.storage_path, content_path)
             Rails.logger.error("Content: #{real_path}, Zip: #{zip_path}, Size: #{size}")
-            File.open(File.join(real_path, 'rb') do |source|
+            File.open(File.join(real_path, 'rb')) do |source|
               IO.copy_stream(source, target)
             end
           end

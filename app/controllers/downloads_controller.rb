@@ -26,8 +26,11 @@ class DownloadsController < ApplicationController
           line.chomp!
           dash, size, content_path, zip_path = line.split(' ', 4)
           content_path.gsub!(/^\/internal\//, '')
+          Rails.logger.error("Content: #{content_path}, Zip: #{zip_path}, Size: #{size}")
           zip.write_stored_file(zip_path) do |target|
-            File.open(File.join(Config.instance.storage_path, content_path), 'rb') do |source|
+            real_path = File.join(Config.instance.storage_path, content_path)
+            Rails.logger.error("Content: #{real_path}, Zip: #{zip_path}, Size: #{size}")
+            File.open(File.join(real_path, 'rb') do |source|
               IO.copy_stream(source, target)
             end
           end

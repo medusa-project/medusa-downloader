@@ -1,7 +1,9 @@
 class DownloadsController < ApplicationController
 
-  include ActionController::Live
-  include ZipTricks::RailsStreaming
+  # include ActionController::Live
+  # include ZipTricks::RailsStreaming
+  include ActionController::Streaming 
+  include Zipline
 
   before_filter :get_request, only: %i(get status manifest download)
   if Config.instance.auth_active?

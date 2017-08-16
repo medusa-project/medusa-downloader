@@ -45,12 +45,13 @@ class DownloadsController < ApplicationController
   def download
     if @request.ready?
       manifest = File.open(@request.manifest_path)
+      file_struct = Struct.new(:file)
       files = manifest.each_line.collect do |line|
         line.chomp!
         dash, size, content_path, zip_path = line.split(' ', 4)
         content_path.gsub!(/^\/internal\//, '')
         real_path = File.join(Config.instance.storage_path, content_path)
-        [File.new(real_path), zip_path]
+        [file_struct.new(real_path), zip_path]
       end
       zipline(files, "#{@request.zip_name}.zip")
     else

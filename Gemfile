@@ -48,7 +48,7 @@ group :development do
   gem 'web-console', '~> 2.0'
   gem 'capistrano-rails', group: :development
   gem 'capistrano-bundler'
-  gem 'capistrano-rvm'
+  gem 'capistrano-rbenv'
 end
 
 group :test do

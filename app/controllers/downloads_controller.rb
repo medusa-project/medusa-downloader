@@ -169,19 +169,26 @@ class DownloadsController < ApplicationController
   end
 
   def create
+    json_string = request.body.read
     Request.transaction do
-      json_string = request.body.read
+      Rails.logger.info "Creating request from: #{json_string}"
       req = HttpRequestBridge.create_request(json_string)
+      Rails.logger.info "Generating manifest for request #{req.downloader_id}"
       req.generate_manifest_and_links
+      Rails.logger.info "Generated manifest for request #{req.downloader_id}"
       render json: HttpRequestBridge.request_received_ok_message(req).to_json, status: 201
     end
   rescue JSON::ParserError
+    Rails.logger.error "Unable to parse request body: #{json_string}"
     render json: {error: 'Unable to parse request body'}.to_json, status: 400
   rescue Request::InvalidRoot
+    Rails.logger.error "Invalid root in request: #{json_string}"
     render json: {error: 'Invalid root'}.to_json, status: 400
   rescue InvalidFileError
+    Rails.logger.error "Invalid or missing file in request: #{json_string}"
     render json: {error: 'Invalid or missing file'}.to_json, status: 400
   rescue Exception
+    Rails.logger.error "Unknown error for request: #{json_string}"
     render json: {error: 'Unknown error'}.to_json, status: 500
   end
 

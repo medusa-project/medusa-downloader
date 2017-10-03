@@ -14,6 +14,7 @@ class AbstractRequestBridge < Object
   def self.make_request(json)
     check_parameters(json)
     id = generate_id
+    Rails.logger.info("Creating request: #{id}")
     Request.create!(client_id: json[:client_id], return_queue: json[:return_queue],
                     root: json[:root], zip_name: zip_name(json, id), timeout: timeout(json), targets: json[:targets],
                     status: 'pending', downloader_id: id)

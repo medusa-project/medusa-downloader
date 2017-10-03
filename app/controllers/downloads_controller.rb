@@ -170,14 +170,14 @@ class DownloadsController < ApplicationController
 
   def create
     json_string = request.body.read
-    Request.transaction do
-      Rails.logger.info "Creating request from: #{json_string}"
-      req = HttpRequestBridge.create_request(json_string)
-      Rails.logger.info "Generating manifest for request #{req.downloader_id}"
-      req.generate_manifest_and_links
-      Rails.logger.info "Generated manifest for request #{req.downloader_id}"
-      render json: HttpRequestBridge.request_received_ok_message(req).to_json, status: 201
-    end
+    #Request.transaction do
+    Rails.logger.info "Creating request from: #{json_string}"
+    req = HttpRequestBridge.create_request(json_string)
+    Rails.logger.info "Generating manifest for request #{req.downloader_id}"
+    req.generate_manifest_and_links
+    Rails.logger.info "Generated manifest for request #{req.downloader_id}"
+    render json: HttpRequestBridge.request_received_ok_message(req).to_json, status: 201
+      #end
   rescue JSON::ParserError
     Rails.logger.error "Unable to parse request body: #{json_string}"
     render json: {error: 'Unable to parse request body'}.to_json, status: 400

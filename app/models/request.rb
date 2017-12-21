@@ -45,6 +45,10 @@ class Request < ActiveRecord::Base
     File.join(storage_path, 'data')
   end
 
+  def literal_path
+    File.join(storage_path, 'literal')
+  end
+
   def delete_manifest_and_links
     FileUtils.rm_rf(storage_path) if Dir.exist?(storage_path)
   end
@@ -92,6 +96,8 @@ class Request < ActiveRecord::Base
         add_file(target)
       when 'directory'
         add_directory(target)
+      when 'literal'
+        add_literal(target)
       else
         raise InvalidTargetTypeError.new(target)
     end
@@ -125,6 +131,18 @@ class Request < ActiveRecord::Base
     end
   end
 
+  def add_literal(target)
+    FileUtils.mkdir_p(literal_path)
+    file = new_literal_file
+    File.open(file, 'w') do |f|
+      f.write(target['content'])
+    end
+    path = target['zip_path'] || ''
+    name = target['name'] || (raise RuntimeError "Name must be provided for literal content.")
+    zip_file_path = File.join(path, name)
+    self.file_list << [file, zip_file_path, File.size(file)]
+  end
+
   def relative_path_to(absolute_path)
     absolute_path.sub(/^#{Config.instance.storage_path}/, '')
   end
@@ -133,6 +151,11 @@ class Request < ActiveRecord::Base
     define_method :"#{status}?" do
       self.status == status
     end
+  end
+
+  def new_literal_file
+    name = File.join(literal_path, SecureRandom.hex(6))
+    File.exist?(name) ? literal_file_name : name
   end
 
 end

@@ -45,17 +45,19 @@ fields. Fields are mandatory unless noted.
       can specify a number of days after which to delete, which will be used if it is smaller than the global number.
     * targets - array - an array of target (described below) telling the downloader what to include in the archive
         * target
-            * type - string - either 'file' or 'directory'
-            * recursive - boolean (optional - default: false) - ignored for a file. For a directory specifies whether to include
+            * type - string - either 'file', 'directory', or 'literal'
+            * recursive - boolean (optional - default: false) - ignored except for a directory. For a directory specifies whether to include
               the entire directory tree or just the files immediately included in the directory
             * path - string - the path relative to the root where the target is. This must resolve to an actual file or
-              directory.
+              directory. Ignored for 'literal'.
             * zip_path - string (optional, default '') - the path where the target should be located in the zip file. Files will
               be located in that directory. Directories (recursive or not) will be a directory in that directory. By default
               everything just goes in the top level of the zip. The zip will uncompress to a directory based on the zip_name.
               E.g. something like 'data.zip' will unzip to a 'data' directory with content by default in that directory.
-            * name - string (optional, default File.basename(path)) - applies only to files. May be used to rename a file
-              in the zip. 
+            * name - string (required for 'literal', optional for others with default File.basename(path)) - 
+              applies only to files. May be used to rename a file in the zip. 
+            * content - string - ignored except for a literal. The content of this string will be placed at the
+              appropriate place in the zip.
 2. request_received (server to client)
     * action - 'request_received'
     * client_id - string - the client_id that the client sent in the export message

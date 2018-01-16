@@ -8,7 +8,7 @@
 # server 'db.example.com', user: 'deploy', roles: %w{db}
 
 set :home, '/home/centos'
-set :deploy_to, "/media/efs/downloader/repos/medusa-downloader-capistrano"
+set :deploy_to, "#{fetch(:home)}/repos/medusa-downloader-capistrano"
 #set :bundle_path, nil
 
 server 'downloader-pilot.library.illinois.edu', user: 'centos', roles: %w(web app db), primary: true

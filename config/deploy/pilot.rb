@@ -12,8 +12,9 @@ set :deploy_to, "#{fetch(:home)}/repos/medusa-downloader-capistrano"
 #set :bundle_path, nil
 
 server 'downloader-pilot.library.illinois.edu', user: 'centos', roles: %w(web app db), primary: true
-ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+ask :branch, proc {`git rev-parse --abbrev-ref HEAD`.chomp}.call
 
+set :keep_releases, 2
 
 # role-based syntax
 # ==================
@@ -28,7 +29,6 @@ ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 # role :db,  %w{deploy@example.com}
 
 
-
 # Configuration
 # =============
 # You can set any configuration variable like in config/deploy.rb
@@ -36,7 +36,6 @@ ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 # For available Capistrano configuration variables see the documentation page.
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
-
 
 
 # Custom SSH Options
@@ -55,13 +54,11 @@ ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 #
 # The server-based syntax can be used to override options:
 # ------------------------------------
-# server 'example.com',
-#   user: 'user_name',
-#   roles: %w{web app},
-#   ssh_options: {
-#     user: 'user_name', # overrides user setting above
-#     keys: %w(/home/user_name/.ssh/id_rsa),
-#     forward_agent: false,
-#     auth_methods: %w(publickey password)
-#     # password: 'please use keys'
-#   }
+server 'downloader-pilot.library.illinois.edu',
+       ssh_options: {
+           user: 'centos', # overrides user setting above
+           keys: %w(/Users/hding2/.ssh/medusa-pilot.pem),
+           forward_agent: false,
+           auth_methods: %w(publickey password)
+           # password: 'please use keys'
+       }

@@ -7,8 +7,24 @@ together the changes necessary for S3.
 
 We need to expand the concept of a root. There should be a type parameter at the top level, which is either 
 'filesystem' (default) or 's3'. Otherwise the filesystem type is unchanged. An s3 root needs a name, amazon and secret keys,
-bucket, and prefix (analogous to the path in the filesystem, default blank). The root type will then be taken into account in
-generating the manifest.
+bucket, and prefix (analogous to the path in the filesystem, default blank). I'm not sure if the region will be needed -
+it depends on some internals in manifest generation.
+The root type will then be taken into account in generating the manifest. So examples are:
+
+```yaml
+
+production:
+  roots:
+    - name: medusa
+      path: /path/to/storage/root
+      type: filesystem
+    - name: medusa-s3
+      aws_access_key_id: key-id
+      aws_secret_access_key: secret-key
+      bucket: medusa-content
+      prefix: collection/prefix
+
+``` 
 
 ## Manifest generation
 

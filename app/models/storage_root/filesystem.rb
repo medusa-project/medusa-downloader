@@ -21,4 +21,8 @@ class StorageRoot::Filesystem < StorageRoot
     raise InvalidFileError.new(name, relative_path)
   end
 
+  def manifest_generator_class
+    ManifestGenerator::Filesystem
+  end
+
 end

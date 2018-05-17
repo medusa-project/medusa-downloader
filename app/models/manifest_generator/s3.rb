@@ -18,7 +18,6 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
     info = s3_client.head_object(bucket: bucket, key: key)
     size = info.content_length
     file_url = presigner.presigned_url(:get_object, bucket: bucket, key: key, expires_in: 7.days.to_i)
-    Rails.logger.error "Generated url #{file_url} for #{bucket}/#{key}"
     self.file_list << [file_url, zip_file_path, size, false]
   rescue Aws::S3::Errors::NotFound
     raise InvalidFileError(request.root, target['path'])

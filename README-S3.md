@@ -53,11 +53,12 @@ and you'd get something like the following in the manifest:
 ## Nginx configuration
 
 Given the above manifest format, there needs to be an entry in the nginx configuration that translates it back to the
-real type of url. For example (don't forget the trailing slashes):
+real type of url. For example (don't forget the trailing slashes, and make sure that the format is correct to match
+the presigned urls):
 
 ```
         location ^~ /bucket/ {
-            proxy_pass https://bucket.region.amazonaws.com/;
+            proxy_pass https://bucket.s3.region.amazonaws.com/;
             internal;
         }
 

@@ -57,7 +57,7 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
   # /<bucket>/nfs_lock_test.sh?params
   def normalized_path(path)
     truncated_path = path.gsub(/^(.*?)amazonaws.com\//, '')
-    URI.escape("/#{bucket}/#{truncated_path}")
+    "/#{bucket}/#{truncated_path}"
   end
 
 end

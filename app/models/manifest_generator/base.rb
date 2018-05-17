@@ -1,6 +1,6 @@
 class ManifestGenerator::Base
 
-  attr_accessor :storage_root, :request, :file_list
+  attr_accessor :storage_root, :request, :file_list, :total_size
   delegate :storage_path, :manifest_path, :targets, to: :request
 
   def initialize(args = {})

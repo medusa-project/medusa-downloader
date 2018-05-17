@@ -1,0 +1,3 @@
+class ManifestGenerator::Base
+
+end

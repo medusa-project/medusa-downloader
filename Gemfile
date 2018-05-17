@@ -36,6 +36,8 @@ gem 'zip_tricks'
 gem 'zipline'
 gem 'nokogiri'
 
+gem 'aws-sdk', '~> 3'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'

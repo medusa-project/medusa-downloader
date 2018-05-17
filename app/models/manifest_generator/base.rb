@@ -25,20 +25,6 @@ class ManifestGenerator::Base
     end
   end
 
-  def write_file_list_and_compute_size
-    self.total_size = 0
-    File.open(manifest_path, 'wb') do |f|
-      self.file_list.each.with_index do |spec, i|
-        path, zip_path, size = spec
-        self.total_size += size
-        symlink_path = File.join(data_path, i.to_s)
-        FileUtils.symlink(path, symlink_path)
-        final_path = "#{request.zip_name}/#{zip_path}".gsub(/\/+/, '/')
-        f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{final_path}\r\n"
-      end
-    end
-  end
-
   def data_path
     File.join(storage_path, 'data')
   end
@@ -73,7 +59,7 @@ class ManifestGenerator::Base
     path = target['zip_path'] || ''
     name = target['name'] || (raise RuntimeError "Name must be provided for literal content.")
     zip_file_path = File.join(path, name)
-    self.file_list << [file, zip_file_path, File.size(file)]
+    self.file_list << [file, zip_file_path, File.size(file), true]
   end
 
   def new_literal_file

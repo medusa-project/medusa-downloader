@@ -6,10 +6,9 @@ together the changes necessary for S3.
 ## Roots
 
 We need to expand the concept of a root. There should be a type parameter at the top level, which is either 
-'filesystem' (default) or 's3'. Otherwise the filesystem type is unchanged. An s3 root needs a name, amazon and secret keys,
-bucket, and prefix (analogous to the path in the filesystem, default blank). I'm not sure if the region will be needed -
-it depends on some internals in manifest generation (basically we need enough to get the size of objects and to
-generate public urls, both using the s3 api).
+'filesystem' (default) or 's3'. Otherwise the filesystem type is unchanged. An s3 root needs a name, aws_access_key_id,
+aws_secret_access_key,
+region, bucket, and prefix (analogous to the path in the filesystem, default blank).
 The root type will then be taken into account in generating the manifest. So examples are:
 
 ```yaml

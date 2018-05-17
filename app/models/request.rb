@@ -60,10 +60,6 @@ class Request < ActiveRecord::Base
     self.save!
   end
 
-  def relative_path_to(absolute_path)
-    absolute_path.sub(/^#{Config.instance.storage_path}/, '')
-  end
-
   STATUSES.each do |status|
     define_method :"#{status}?" do
       self.status == status

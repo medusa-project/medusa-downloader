@@ -47,6 +47,10 @@ class ManifestGenerator::Base
     File.join(storage_path, 'literal')
   end
 
+  def relative_path_to(absolute_path)
+    absolute_path.sub(/^#{Config.instance.storage_path}/, '')
+  end
+
   def add_target(target)
     case target['type']
     when 'file'

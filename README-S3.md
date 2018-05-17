@@ -63,3 +63,6 @@ real type of url. For example (don't forget the trailing slashes):
         }
 
 ```
+
+I don't know if the second nginx trick will be necessary, but if so then you can set it up just as you'd expect. Have
+the main nginx proxy_pass to the second and then set the second one up as above.

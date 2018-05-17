@@ -39,7 +39,7 @@ class AbstractRequestBridge < Object
   end
 
   def self.check_parameters(json)
-    raise Request::InvalidRoot unless StorageRoot.find(json[:root])
+    raise Request::InvalidRoot unless StorageRootFinder.find(json[:root])
   end
 
   def self.request_received_ok_message(request)

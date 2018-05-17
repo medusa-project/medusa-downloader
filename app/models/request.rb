@@ -83,7 +83,7 @@ class Request < ActiveRecord::Base
 #throw an error if a file/directory does not exist, if it is outside of the root, if the target type is invalid,
 #etc.
   def generate_file_list
-    self.storage_root = StorageRoot.find(self.root)
+    self.storage_root = StorageRootFinder.find(self.root)
     self.file_list = Array.new
     self.targets.each do |target|
       add_target(target)

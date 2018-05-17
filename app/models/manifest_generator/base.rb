@@ -33,7 +33,7 @@ class ManifestGenerator::Base
         self.total_size += size
         symlink_path = File.join(data_path, i.to_s)
         FileUtils.symlink(path, symlink_path)
-        final_path = "#{zip_name}/#{zip_path}".gsub(/\/+/, '/')
+        final_path = "#{request.zip_name}/#{zip_path}".gsub(/\/+/, '/')
         f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{final_path}\r\n"
       end
     end

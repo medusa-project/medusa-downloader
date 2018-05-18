@@ -39,18 +39,13 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
     key_prefix = key_prefix + '/' unless key_prefix.end_with?('/')
     keys = Array.new
     continuation_token = nil
+    #This gets only those in the specified 'directory' unless recursion is specified
+    delimiter = (target['recursive'] == true) ? nil : '/'
     loop do
-      results = s3_client.list_objects_v2(bucket: bucket, prefix: key_prefix, continuation_token: continuation_token)
+      results = s3_client.list_objects_v2(bucket: bucket, prefix: key_prefix, continuation_token: continuation_token, delimiter: delimiter)
       keys += results.contents.collect(&:key).reject {|key| key.end_with?('/')}
       continuation_token = results.next_continuation_token
       break if continuation_token.nil?
-    end
-    unless target['recursive'] == true
-      #if not recursive, filter the keys - remove the prefix and select those without '/', which represents those
-      # objects 'in' the given directory
-      keys = keys.reject do |key|
-        key.sub(/^#{key_prefix}/, '').match('/')
-      end
     end
     #add to the file list for each key, similarly to add_file but preserving the right path info and such
     #once again, we'll need to get the size and presigned url. May admit some refactoring after.

@@ -35,7 +35,7 @@ class StorageRoot::S3 < StorageRoot
   end
 
   def presigned_get_url(key, args = {})
-    presigner.presigned_url(:get_object, {bucket: bucket, key: key, expires_in: 7.days_to_i}.merge(args))
+    presigner.presigned_url(:get_object, {bucket: bucket, key: key, expires_in: 7.days.to_i}.merge(args))
   end
 
   def file_keys(directory_key)
@@ -47,15 +47,15 @@ class StorageRoot::S3 < StorageRoot
   end
 
   def subdirectory_keys(directory_key)
-    Array.new.tap do |keys|
-      continuation_token = nil
-      loop do
-        results = s3_client.list_objects_v2(bucket: bucket, prefix: ensure_directory_key(directory_key), continuation_token: continuation_token, delimiter: delimiter)
-        keys += results.common_prefixes.collect(&:key)
-        continuation_token = results.next_continuation_token
-        break if continuation_token.nil?
-      end
+    keys = Array.new
+    continuation_token = nil
+    loop do
+      results = s3_client.list_objects_v2(bucket: bucket, prefix: ensure_directory_key(directory_key), continuation_token: continuation_token, delimiter: delimiter)
+      keys += results.common_prefixes.collect(&:key)
+      continuation_token = results.next_continuation_token
+      break if continuation_token.nil?
     end
+    return keys
   end
 
   def internal_subtree_keys(directory_key, delimiter: nil)

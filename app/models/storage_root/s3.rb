@@ -58,8 +58,6 @@ class StorageRoot::S3 < StorageRoot
     end
   end
 
-  private
-
   def internal_subtree_keys(directory_key, delimiter: nil)
     Array.new.tap do |keys|
       continuation_token = nil

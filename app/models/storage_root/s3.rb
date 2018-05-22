@@ -59,16 +59,17 @@ class StorageRoot::S3 < StorageRoot
   end
 
   def internal_subtree_keys(directory_key, delimiter: nil)
-    Array.new.tap do |keys|
-      continuation_token = nil
-      loop do
-        results = s3_client.list_objects_v2(bucket: bucket, prefix: ensure_directory_key(directory_key), continuation_token: continuation_token, delimiter: delimiter)
-        keys += results.contents.collect(&:key).reject {|key| directory_key?(key)}
-        continuation_token = results.next_continuation_token
-        break if continuation_token.nil?
-      end
+    keys = Array.new
+    continuation_token = nil
+    loop do
+      results = s3_client.list_objects_v2(bucket: bucket, prefix: ensure_directory_key(directory_key), continuation_token: continuation_token, delimiter: delimiter)
+      keys += results.contents.collect(&:key).reject {|key| directory_key?(key)}
+      continuation_token = results.next_continuation_token
+      break if continuation_token.nil?
     end
+    return keys
   end
+
 
   def directory_key?(key)
     key.end_with?('/')

@@ -1,3 +1,5 @@
+#In this type of storage root the key is simply the key into the S3 storage bucket.
+# Some additional methods relevant to S3 are provided.
 class StorageRoot::S3 < StorageRoot
   attr_accessor :bucket, :region, :prefix, :aws_access_key_id, :aws_secret_access_key
 
@@ -24,6 +26,13 @@ class StorageRoot::S3 < StorageRoot
 
   def info(key)
     s3_client.head_object(bucket: bucket, key: key)
+  end
+
+  def exist?(key)
+    info(key)
+    true
+  rescue Aws::S3::Errors::NotFound
+    false
   end
 
   def size(key)
@@ -65,7 +74,6 @@ class StorageRoot::S3 < StorageRoot
     end
     return keys
   end
-
 
   def directory_key?(key)
     key.end_with?('/')

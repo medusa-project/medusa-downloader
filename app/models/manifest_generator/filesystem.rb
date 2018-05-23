@@ -45,7 +45,7 @@ class ManifestGenerator::Filesystem < ManifestGenerator::Base
       relative_path = storage_root.relative_path_from(key, directory_key)
       zip_file_path = File.join(zip_path, relative_path)
       size = storage_root.size(key)
-      self.file_list << [path_to(key), zip_file_path, size, false]
+      self.file_list << [storage_root.path_to(key), zip_file_path, size, false]
     end
   end
 

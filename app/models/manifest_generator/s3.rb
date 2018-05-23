@@ -16,14 +16,14 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
   end
 
   def add_directory(target)
-    key = key_for(target['path'])
+    directory_key = key_for(target['path'])
     keys = if target['recursive'] == true
-             storage_root.subtree_keys(key)
+             storage_root.subtree_keys(directory_key)
            else
-             storage_root.file_keys(key)
+             storage_root.file_keys(directory_key)
            end
     zip_path = target['zip_path'] || target['path']
-    keys.each do |key|
+    Parallel.each(keys, in_threads: 10) do |key|
       begin
         zip_file_path = File.join(zip_path, relative_path(key, target['path']))
         size = storage_root.size(key)

@@ -19,7 +19,7 @@ class ManifestGenerator::Base
   #throw an error if a file/directory does not exist, if it is outside of the root, if the target type is invalid,
   #etc.
   def generate_file_list
-    self.file_list = Array.new
+    self.file_list = Concurrent::Array.new
     targets.each do |target|
       add_target(target)
     end

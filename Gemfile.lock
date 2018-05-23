@@ -743,6 +743,7 @@ GEM
     net-ssh (4.2.0)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
+    parallel (1.12.1)
     passenger (5.1.12)
       rack
       rake (>= 0.8.1)
@@ -890,6 +891,7 @@ DEPENDENCIES
   capybara
   capybara-email
   coffee-rails
+  concurrent-ruby
   connection_pool
   cucumber-rails
   daemons
@@ -903,6 +905,7 @@ DEPENDENCIES
   json_spec
   less-rails
   nokogiri
+  parallel
   passenger
   pg
   puma

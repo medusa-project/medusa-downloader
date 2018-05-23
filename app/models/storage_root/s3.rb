@@ -10,10 +10,6 @@ class StorageRoot::S3 < StorageRoot
     self.aws_secret_access_key = args[:aws_secret_access_key]
   end
 
-  def manifest_generator_class
-    ManifestGenerator::S3
-  end
-
   def s3_client
     @s3_client ||= Aws::S3::Client.new(region: region, credentials: s3_credentials)
   end

@@ -70,4 +70,20 @@ class Request < ActiveRecord::Base
     self.storage_root ||= StorageRootFinder.find(self.root)
   end
 
+  def manifest_generator_class
+    case ensure_storage_root
+    when StorageRoot::Filesystem
+      ManifestGenerator::Filesystem
+    when StorageRoot::S3
+      ManifestGenerator::S3
+    else
+      raise "No ManifestGenerator for provided storage root type"
+    end
+  end
+
+  def get_manifest_generator
+    manifest_generator_class.new(request: self, storage_root: ensure_storage_root)
+  end
+
+
 end

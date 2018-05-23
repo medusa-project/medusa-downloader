@@ -47,7 +47,7 @@ class Request < ActiveRecord::Base
   def generate_manifest_and_links
     self.status = 'creating_manifest'
     self.save!
-    manifest_generator = ensure_storage_root.manifest_generator(self)
+    manifest_generator = get_manifest_generator
     manifest_generator.generate_manifest_and_links
     self.total_size = manifest_generator.total_size
     self.status = 'ready'

@@ -36,7 +36,7 @@ gem 'zip_tricks'
 gem 'zipline'
 gem 'nokogiri'
 
-gem 'aws-sdk', '~> 3'
+gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'master'
 
 gem 'concurrent-ruby', require: 'concurrent'
 gem 'parallel'

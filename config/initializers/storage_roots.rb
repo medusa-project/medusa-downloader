@@ -1,0 +1,1 @@
+MedusaDownloader.storage_roots = MedusaStorage::RootSet.new(Config.roots)

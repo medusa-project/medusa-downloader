@@ -1,7 +1,8 @@
-#In this type of StorageRoot the key is the relative path from the filesystem location of the storage root. An empty
+#In this type of MedusaStorage::Root the key is the relative path from the filesystem location of the storage root. An empty
 # key '' represents the root itself.
 # In addition to the common methods some additional file system specific methods will be provided.
-class StorageRoot::Filesystem < StorageRoot
+require 'pathname'
+class MedusaStorage::Root::Filesystem < MedusaStorage::Root
 
   attr_accessor :path, :pathname, :real_path
 

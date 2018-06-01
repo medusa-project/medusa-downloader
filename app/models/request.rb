@@ -67,14 +67,14 @@ class Request < ActiveRecord::Base
   end
 
   def ensure_storage_root
-    self.storage_root ||= StorageRootFinder.find(self.root)
+    self.storage_root ||= MedusaDownloader.storage_roots(self.root)
   end
 
   def manifest_generator_class
     case ensure_storage_root
-    when StorageRoot::Filesystem
+    when MedusaStorage::Root::Filesystem
       ManifestGenerator::Filesystem
-    when StorageRoot::S3
+    when MedusaStorage::Root::S3
       ManifestGenerator::S3
     else
       raise "No ManifestGenerator for provided storage root type"

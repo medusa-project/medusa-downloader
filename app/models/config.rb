@@ -33,8 +33,8 @@ class Config < Object
     config[:nginx_url]
   end
 
-  def root_named(name)
-    config[:roots].detect {|root| root[:name] == name}
+  def roots
+    config[:roots]
   end
 
   def storage_path

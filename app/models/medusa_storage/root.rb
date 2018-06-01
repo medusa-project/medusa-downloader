@@ -1,5 +1,4 @@
-require 'pathname'
-class StorageRoot
+class MedusaStorage::Root
 
   attr_accessor :name
 

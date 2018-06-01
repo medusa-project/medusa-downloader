@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/medusa-project/medusa_storage.git
-  revision: 82921be9b18cf792451a1dcd80a8991a65a28c28
+  revision: 436aac8abe40c8c931ad82a53f1905f1f5d74a08
   branch: master
   specs:
-    medusa_storage (0.1.1)
+    medusa_storage (0.1.2)
       aws-sdk (~> 3)
 
 GEM

@@ -21,9 +21,8 @@ class MedusaStorage::RootSet
     end
   end
 
-  def [](root_name)
+  def at(root_name)
     root_set[root_name]
   end
-
 
 end

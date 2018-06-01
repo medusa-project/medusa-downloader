@@ -39,7 +39,7 @@ class AbstractRequestBridge < Object
   end
 
   def self.check_parameters(json)
-    raise Request::InvalidRoot unless MedusaDownloader.storage_roots[json[:root]].present?
+    raise Request::InvalidRoot unless MedusaDownloader::Application.storage_roots[json[:root]].present?
   end
 
   def self.request_received_ok_message(request)

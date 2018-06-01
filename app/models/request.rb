@@ -67,7 +67,7 @@ class Request < ActiveRecord::Base
   end
 
   def ensure_storage_root
-    self.storage_root ||= MedusaDownloader.storage_roots(self.root)
+    self.storage_root ||= MedusaDownloader::Application.storage_roots(self.root)
   end
 
   def manifest_generator_class

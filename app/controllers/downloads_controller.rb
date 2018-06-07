@@ -184,7 +184,7 @@ class DownloadsController < ApplicationController
   rescue Request::InvalidRoot
     Rails.logger.error "Invalid root in request: #{json_string}"
     render json: {error: 'Invalid root'}.to_json, status: 400
-  rescue InvalidFileError
+  rescue MedusaStorage::InvalidKeyError
     Rails.logger.error "Invalid or missing file in request: #{json_string}"
     render json: {error: 'Invalid or missing file'}.to_json, status: 400
   rescue Exception

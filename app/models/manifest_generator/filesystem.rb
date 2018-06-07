@@ -6,7 +6,7 @@ class ManifestGenerator::Filesystem < ManifestGenerator::Base
   def add_file(target)
     relative_path = target['path']
     file_url = storage_root.path_to(relative_path)
-    raise InvalidFileError(request.root, relative_path) unless File.file?(file_url)
+    raise MedusaStorage::InvalidKeyError(request.root, relative_path) unless File.file?(file_url)
     zip_path = target['zip_path'] || ''
     name = target['name'] || File.basename(relative_path)
     zip_file_path = File.join(zip_path, name)
@@ -34,7 +34,7 @@ class ManifestGenerator::Filesystem < ManifestGenerator::Base
 
   def add_directory(target)
     directory_key = target['path']
-    raise InvalidFileError(request.root, directory_key) unless storage_root.exist?(directory_key)
+    raise MedusaStorage::InvalidKeyError(request.root, directory_key) unless storage_root.exist?(directory_key)
     zip_path = target['zip_path'] || directory_key
     keys = if target['recursive'] == true
              storage_root.subtree_keys(directory_key)

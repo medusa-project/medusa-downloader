@@ -48,11 +48,11 @@ class AmqpRequestBridge < AbstractRequestBridge
     AmqpConnector.instance.send_message(request.return_queue, request_received_ok_message(request))
   end
 
-  def self.send_invalid_file_error(error, request)
+  def self.send_invalid_key_error(error, request)
     message = {
         action: 'error',
         id: request.downloader_id,
-        error: "Missing or invalid file or directory: #{error.relative_path}"
+        error: "Missing or invalid key: #{error.relative_path}"
     }
     AmqpConnector.instance.send_message(request.return_queue, message)
   end

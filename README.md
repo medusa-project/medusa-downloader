@@ -36,9 +36,10 @@ fields. Fields are mandatory unless noted.
       permanent id for the request.
     * return_queue - string - an AMQP queue that the downloader should use to send messages back to the client. This and
       the incoming queue should exist ahead of time and both the downloader and client will need access to them. 
-    * root - string - the name of the 'root' from which the content is located. This maps to a directory on each side where
-      the content of interest to that client resides. All content in a request must live underneath that directory; it is an
-      error to escape from it with '..', etc. The downloader maintains a list of these to service multiple clients.
+    * root - string - the name of the 'root' from which the content is located. This maps to medusa_storage root on each side where
+      the content of interest to that client resides. All content in a request must live underneath that root; it is an
+      error to escape from it with '..', etc. The downloader maintains a list of these to service multiple clients or 
+      multiple storage areas.
     * zip_name - string (optional) - the name of the zip file to be produced. If not supplied a non-meaningful one will
       be generated. Do not append the '.zip' extension.
     * timeout - integer (optional) - the server will automatically delete requests after a number of days, but the client
@@ -176,3 +177,66 @@ this internally to the mod-zip nginx gave us problem with open
 file limits on the OS, which we speculate was because mod_zip/nginx
 wasn't closing the files until the whole zip was sent. Going to an
 external request for the file content seems to have solved this problem.
+
+## S3 integration
+
+In addition to content lying on an accessible filesystem we can also serve
+content from S3. To do this configure a medusa_storage root of type s3. 
+
+The root type will then be taken into account in generating the manifest. So examples are:
+
+```yaml
+
+production:
+  roots:
+    - name: medusa
+      path: /path/to/storage/root
+      type: filesystem
+    - name: medusa-s3
+      aws_access_key_id: key-id
+      aws_secret_access_key: secret-key
+      bucket: medusa-content
+      prefix: collection/prefix
+
+``` 
+
+### Manifest generation
+
+For our purposes we continue to think of S3 using the directory model. So it still makes sense to talk about files, 
+directories, and recursive directories. If a trailing slash is left out we insert it to. Everything is taken relative
+to the specified root prefix, as with the filesystem. (Note that if we're not thinking that way we can just do everything
+as individual objects using the 'file' target and everything will still work.) 'literal' targets will still be handled
+with a manifest entry pointing to a real file on the file system, which we do the same way we did for the file system
+type root.
+
+Instead of symlinking to content on the filesystem, we use the S3 capability to generate a time limited, pre-signed, 
+public URL. These look roughly like:
+
+https://bucket.s3-region.amazonaws.com/key?some_parameters.
+
+The manifest in this case generates entries like:
+
+- <size> /bucket/key?some_parameters /path/in/zip
+
+As an example, if your bucket were 'content', the prefix 'my/collection', and the target 'path/to/file.txt' to go at 
+the top level of the zip then the bucket 'content' would have to have an object with key 'my/collection/path/to/file.txt' 
+and you'd get something like the following in the manifest:
+
+- <size of file.txt> /content/my/collection/path/to/file.txt?params file.txt 
+
+### Nginx configuration
+
+Given the above manifest format, there needs to be an entry in the nginx configuration that translates it back to the
+real type of url. For example (don't forget the trailing slashes, and make sure that the format is correct to match
+the presigned urls):
+
+```
+        location ^~ /bucket/ {
+            proxy_pass https://bucket.s3.region.amazonaws.com/;
+            internal;
+        }
+
+```
+
+I don't know if the second nginx trick will be necessary, but if so then you can set it up just as you'd expect. Have
+the main nginx proxy_pass to the second and then set the second one up as above.

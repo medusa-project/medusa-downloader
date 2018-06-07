@@ -75,4 +75,13 @@ another web server fills the role of the file-serving nginx. Just make sure
 that when the above /internal location is hit that the proxied server
 serves up the right content back to the mod_zip nginx.
 
+## nginx issues
+
+It appears that if the manifest gets too large then nginx (mod_zip, specifically) will
+consume large amounts of memory trying to  parse it, potentially exhausting available
+memory and crashing nginx. I have a ticket in to mod_zip about this, but I don't know 
+if I expect to see it fixed. It appears that the parser used experiences exponential growth
+in memory usage. Around 30000/40000 files or 12500 or so S3 urls work in 4GB/4GB mem/swap
+on one of our servers. There is no obvious (to me) way around this right now. 
+
     

@@ -187,8 +187,10 @@ class DownloadsController < ApplicationController
   rescue MedusaStorage::InvalidKeyError
     Rails.logger.error "Invalid or missing file in request: #{json_string}"
     render json: {error: 'Invalid or missing file'}.to_json, status: 400
-  rescue Exception
+  rescue Exception => e
     Rails.logger.error "Unknown error for request: #{json_string}"
+    Rails.logger.error "Error: #{e}"
+    Rails.logger.error "Backtrace: #{e.backtrace}"
     render json: {error: 'Unknown error'}.to_json, status: 500
   end
 

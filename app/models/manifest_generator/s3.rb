@@ -12,7 +12,7 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
     file_url = storage_root.presigned_get_url(key)
     self.file_list << [file_url, zip_file_path, size, false]
   rescue Aws::S3::Errors::NotFound
-    raise MedusaStorage::InvalidKeyError(request.root, target['path'])
+    raise MedusaStorage::InvalidKeyError.new(request.root, target['path'])
   end
 
   def add_directory(target)
@@ -30,7 +30,7 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
         file_url = storage_root.presigned_get_url(key)
         self.file_list << [file_url, zip_file_path, size, false]
       rescue Aws::S3::Errors::NotFound
-        raise MedusaStorage::InvalidKeyError(request.root, key)
+        raise MedusaStorage::InvalidKeyError.new(request.root, key)
       end
     end
   end

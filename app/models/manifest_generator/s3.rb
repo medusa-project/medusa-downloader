@@ -1,6 +1,6 @@
 class ManifestGenerator::S3 < ManifestGenerator::Base
 
-  delegate :bucket, :region, :prefix, to: :storage_root
+  delegate :bucket, :region, to: :storage_root
 
 
   def add_file(target)

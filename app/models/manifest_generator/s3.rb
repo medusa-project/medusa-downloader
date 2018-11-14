@@ -7,7 +7,7 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
     path = target['zip_path'] || ''
     name = target['name'] || File.basename(target['path'])
     zip_file_path = File.join(path, name)
-    key = key_for(target['path'])
+    key = target['path']
     size = storage_root.size(key)
     file_url = storage_root.presigned_get_url(key)
     self.file_list << [file_url, zip_file_path, size, false]
@@ -16,7 +16,7 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
   end
 
   def add_directory(target)
-    directory_key = key_for(target['path'])
+    directory_key = storage_root.ensure_directory_key(target['path'])
     keys = if target['recursive'] == true
              storage_root.subtree_keys(directory_key)
            else
@@ -25,7 +25,7 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
     zip_path = target['zip_path'] || target['path']
     Parallel.each(keys, in_threads: 10) do |key|
       begin
-        zip_file_path = File.join(zip_path, relative_path(key, target['path']))
+        zip_file_path = File.join(zip_path, target['path'])
         size = storage_root.size(key)
         file_url = storage_root.presigned_get_url(key)
         self.file_list << [file_url, zip_file_path, size, false]
@@ -53,25 +53,11 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
     end
   end
 
-  def key_for(path)
-    if prefix.blank?
-      path
-    else
-      File.join(prefix, path)
-    end
-  end
-
 #convert a url like https://dls-medusa-test.s3.us-east-2.amazonaws.com/nfs_lock_test.sh?params to
 # /<bucket>/nfs_lock_test.sh?params
   def normalized_path(path)
     truncated_path = path.gsub(/^(.*?)amazonaws.com\//, '')
     "/#{bucket}/#{truncated_path}"
   end
-
-  def relative_path(full_key, directory)
-    directory = directory + '/' unless directory.end_with?('/')
-    prefix_to_remove = key_for(directory)
-    full_key.sub(/^#{prefix_to_remove}/, '')
-  end
-
+  
 end

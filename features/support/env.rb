@@ -59,3 +59,5 @@ Cucumber::Rails::Database.javascript_strategy = :truncation
 require 'capybara/email'
 World(Capybara::Email::DSL)
 
+#Uncomment to run jobs synchronously
+#Delayed::Worker.delay_jobs = false

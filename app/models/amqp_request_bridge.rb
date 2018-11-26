@@ -52,7 +52,7 @@ class AmqpRequestBridge < AbstractRequestBridge
     message = {
         action: 'error',
         id: request.downloader_id,
-        error: "Missing or invalid key: #{error.relative_path}"
+        error: "Missing or invalid key: #{error.key}"
     }
     AmqpConnector.instance.send_message(request.return_queue, message)
   end

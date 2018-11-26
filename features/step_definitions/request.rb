@@ -28,7 +28,7 @@ And(/^a missing files message should have been sent$/) do
   AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
     expect(message['action']).to eql('error')
     expect(message['id']).to eql(@request.downloader_id)
-    expect(message['error']).to match(/Missing or invalid file or directory/)
+    expect(message['error']).to match(/Missing or invalid key/)
     expect(message['error']).to match(/missing_file_name/)
   end
 end
@@ -142,7 +142,7 @@ def invalid_root_request
 end
 
 def missing_files_request
-  h = valid_request_hash
+  h = valid_request_hash.clone
   h[:targets] = [{type: :file, path: :missing_file_name}]
   h.to_json.to_s
 end

@@ -62,7 +62,7 @@ group :test do
   gem 'rspec-rails'
   gem 'cucumber-rails', require: false
   gem 'shoulda'
-  gem 'factory_girl'
+  gem 'factory_bot'
   gem 'capybara'
   gem 'capybara-email'
   gem 'database_cleaner'

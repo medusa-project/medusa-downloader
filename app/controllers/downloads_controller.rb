@@ -6,8 +6,8 @@ class DownloadsController < ApplicationController
   # include ActionController::Streaming
   #include Zipline
 
-  before_filter :get_request, only: %i(get status manifest download)
-  skip_before_filter :verify_authenticity_token, only: :create
+  before_action :get_request, only: %i(get status manifest download)
+  skip_before_action :verify_authenticity_token, only: :create
 
   def get
     if @request.ready?

@@ -213,8 +213,8 @@ GEM
       rack
       rake (>= 0.8.1)
     pg (0.21.0)
-    public_suffix (3.0.1)
-    puma (3.11.0)
+    public_suffix (3.0.3)
+    puma (3.12.0)
     rack (1.6.11)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -308,7 +308,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sshkit (1.15.1)
+    sshkit (1.18.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     temple (0.8.0)
@@ -318,9 +318,6 @@ GEM
     thor (0.20.3)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    turbolinks (5.0.1)
-      turbolinks-source (~> 5)
-    turbolinks-source (5.0.3)
     twitter-bootstrap-rails (3.2.2)
       actionpack (>= 3.1)
       execjs (>= 2.2.2, >= 2.2)
@@ -328,7 +325,7 @@ GEM
       railties (>= 3.1)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
-    uglifier (4.0.2)
+    uglifier (4.1.20)
       execjs (>= 0.3.0, < 3)
     web-console (3.3.0)
       activemodel (>= 4.2)
@@ -383,7 +380,6 @@ DEPENDENCIES
   spring
   spring-commands-cucumber
   therubyracer
-  turbolinks
   twitter-bootstrap-rails (~> 3.2.2)
   uglifier
   web-console

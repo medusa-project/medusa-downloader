@@ -99,18 +99,12 @@ AMQP interface. Generally this should only be used when the request
 is for a small number of files and hence can be completed quickly.
 
 The path for creation is /downloads/create. 
-It is recommended that you restrict this in some way to trusted users.
-If you set 'active' to true in the auth section of the
-config/medusa_downloader.yml file then the client must provide http
-digest credentials. The realm and users/passwords are also configured
-there in this case - see the template file
+It is recommended that you restrict this in some way to trusted users,
+for example by having the proxying nginx check digest authentication or
+restrict the hosts able to access this action. 
 
-Alternately you can set 'active' to false and enforce authentication
-somewhere else - since this application presupposes proxying by nginx
-that is also a fine place to do it.
-
-If you want this feature to be turned off you can simply activate
-authentication on the rails side and have no users.
+If you want this feature to be turned off you can simply have no users
+or allow no hosts to access the action.
 
 The request should be a post with the body a string parseable as JSON.
 The format of the JSON is the same as for an AMQP request , with the 

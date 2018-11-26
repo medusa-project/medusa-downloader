@@ -1,0 +1,24 @@
+sudo: required
+
+language: ruby
+cache: bundler
+
+rvm:
+- 2.5.1
+
+services:
+- postgresql
+- rabbitmq
+
+before_install:
+- sudo apt-get update
+
+before_script:
+- cp config/medusa_downloader.yml.template config/medusa_downloader.yml
+- cp config/database.yml.travis config/database.yml
+- bundle exec rake db:create
+- bundle exec rake db:structure:load
+- bundle exec rake db:seed
+
+script:
+- bundle exec cucumber

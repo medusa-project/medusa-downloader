@@ -18,31 +18,23 @@ Feature: Create download request
     Then an error message should be emailed to the admin
 
   Scenario: Valid HTTP request results in request object and delayed job
-    Given I authenticate
-    And a valid HTTP request is received
+    Given a valid HTTP request is received
     Then a request should exist with status 'ready'
     And a manifest should have been generated
     And an HTTP response should be received indicating success
 
   Scenario: Invalid, unparseable HTTP request fails
-    Given I authenticate
-    And an unparseable HTTP request is received
+    Given an unparseable HTTP request is received
     Then no request should have been generated
     And an HTTP response should be received indicating an unparseable request
 
   Scenario: Invalid root but parseable HTTP request fails
-    Given I authenticate
-    And an invalid root but parseable HTTP request is received
+    Given an invalid root but parseable HTTP request is received
     Then no request should have been generated
     And an HTTP response should be received indicating an invalid root
 
   Scenario: Missing files HTTP request fails
-    Given I authenticate
-    And a missing files but parseable HTTP request is received
+    Given a missing files but parseable HTTP request is received
     Then no request should have been generated
     And an HTTP response should be received indicating missing files
-
-  Scenario: HTTP request creation requires authorization
-    Given a valid HTTP request is received
-    Then I should be unauthorized
 

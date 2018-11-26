@@ -7,9 +7,6 @@ class DownloadsController < ApplicationController
   #include Zipline
 
   before_filter :get_request, only: %i(get status manifest download)
-  if Config.instance.auth_active?
-    before_filter :authenticate, only: :create
-  end
   skip_before_filter :verify_authenticity_token, only: :create
 
   def get
@@ -176,6 +173,7 @@ class DownloadsController < ApplicationController
     Rails.logger.info "Generating manifest for request #{req.downloader_id}"
     req.generate_manifest_and_links
     Rails.logger.info "Generated manifest for request #{req.downloader_id}"
+    x = HttpRequestBridge.request_received_ok_message(req).to_json
     render json: HttpRequestBridge.request_received_ok_message(req).to_json, status: 201
       #end
   rescue JSON::ParserError
@@ -186,6 +184,7 @@ class DownloadsController < ApplicationController
     render json: {error: 'Invalid root'}.to_json, status: 400
   rescue MedusaStorage::InvalidKeyError
     Rails.logger.error "Invalid or missing file in request: #{json_string}"
+    req.destroy! if req.present?
     render json: {error: 'Invalid or missing file'}.to_json, status: 400
   rescue Exception => e
     Rails.logger.error "Unknown error for request: #{json_string}"

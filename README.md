@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/medusa-project/medusa-downloader.svg?branch=master)](https://travis-ci.org/medusa-project/medusa-downloader)
 # Medusa downloader
 
 ## Introduction

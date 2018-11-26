@@ -17,7 +17,7 @@ before_script:
 - cp config/medusa_downloader.yml.template config/medusa_downloader.yml
 - cp config/database.yml.travis config/database.yml
 - bundle exec rake db:create
-- bundle exec rake db:structure:load
+- bundle exec rake db:schema:load
 - bundle exec rake db:seed
 
 script:

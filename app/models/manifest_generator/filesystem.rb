@@ -1,6 +1,5 @@
 require 'securerandom'
 require 'fileutils'
-require 'pathname'
 
 class ManifestGenerator::Filesystem < ManifestGenerator::Base
 
@@ -17,7 +16,6 @@ class ManifestGenerator::Filesystem < ManifestGenerator::Base
 
   def add_directory(target)
     directory_key = target['path']
-    directory_path = Pathname.new(directory_key)
     raise MedusaStorage::InvalidKeyError.new(request.root, directory_key) unless storage_root.exist?(directory_key)
     zip_path = target['zip_path'] || directory_key
     keys = if target['recursive'] == true
@@ -26,7 +24,7 @@ class ManifestGenerator::Filesystem < ManifestGenerator::Base
              storage_root.file_keys(directory_key)
            end
     keys.each do |key|
-      relative_path = Pathname.new(key).relative_path_from(directory_path).to_s
+      relative_path = storage_root.relative_path_from(key, directory_key)
       zip_file_path = File.join(zip_path, relative_path)
       size = storage_root.size(key)
       self.file_list << [storage_root.path_to(key), zip_file_path, size, false]

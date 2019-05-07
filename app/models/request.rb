@@ -12,10 +12,10 @@ class Request < ActiveRecord::Base
   after_destroy :delete_manifest_and_links
 
   def download_url
-    if manifest_line_count <= 10000
-      nginx_download_url
-    else
+    if (manifest_line_count > 25000) and ensure_storage_root.is_a?(MedusaStorage::Root::Filesystem)
       clojure_download_url
+    else
+      nginx_download_url
     end
   end
 

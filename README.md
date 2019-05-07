@@ -7,7 +7,9 @@ This rails application will combine with an nginx server running mod_zip
 and another nginx server (optionally any server capable of serving 
 static content - this application can do it if properly configured, but
 nginx is much faster) to allow streamable zip downloads of medusa
-content.
+content. Also because of a bug (IMHO) in mod\_zip, downloads with a large
+number of files are served directly through rails using a helper program 
+(clojure-zipper, described below).
 
 This application produces packages on the file system and manifests for
 the packages suitable for nginx mod_zip. The mod_zip nginx server 
@@ -18,6 +20,10 @@ with a single nginx server because of difficulties with open file
 limits - it appears that internally serving the files directly from
 the mod_zip server does not close them in time, whereas making the
 requests go to an external server does.)
+
+For requests with a large number of files, clojure-zipper is invoked and the
+manifest sent to that. Rails reads the output from that (the zip file) and sends
+it back to the client directly.
 
 Client applications will send AMQP requests to this application to get it to produce manifests for desired content by
 naming that content relative to some 'root' directory that both the client and downloader know about. The downloader
@@ -151,7 +157,8 @@ featureful form through its own website).
 
 This is to make clear exactly what happens when a download is done
  in case other explanations are confusing.
- 
+
+### nginx/mod_zip 
 1. User hits /downloads/<root>/<id>/get
 2. Mod-zip nginx proxies to Rails
 3. Rails returns manifest to mod-zip nginx along with header to 
@@ -172,6 +179,13 @@ this internally to the mod-zip nginx gave us problem with open
 file limits on the OS, which we speculate was because mod_zip/nginx
 wasn't closing the files until the whole zip was sent. Going to an
 external request for the file content seems to have solved this problem.
+
+### rails/clojure-zipper
+1. User hits /downloads/<root>/<id>/download
+2. Rails invokes clojure-zipper, passing it the manifest path and some other information
+3. clojure-zipper opens a zip stream on its stdout and writes the zip to it
+4. Rails reads the stdout coming from clojure-zipper and writes it to the response,
+   thereby streaming the zip back to the user.
 
 ## S3 integration
 
@@ -194,6 +208,8 @@ production:
       prefix: collection/prefix
 
 ``` 
+
+Currently (because of clojure-zipper limitations) this only works for mod_zip.
 
 ### Manifest generation
 
@@ -235,3 +251,8 @@ the presigned urls):
 
 I don't know if the second nginx trick will be necessary, but if so then you can set it up just as you'd expect. Have
 the main nginx proxy_pass to the second and then set the second one up as above.
+
+### clojure-zipper
+
+The jars/ directory needs to contain the clojure-zipper.jar built from
+[clojure-zipper](https://github.com/medusa-project/clojure-zipper).

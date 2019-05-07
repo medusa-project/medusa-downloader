@@ -12,7 +12,19 @@ class Request < ActiveRecord::Base
   after_destroy :delete_manifest_and_links
 
   def download_url
+    if manifest_line_count <= 10000
+      nginx_download_url
+    else
+      clojure_download_url
+    end
+  end
+
+  def nginx_download_url
     "#{Config.nginx_url}/downloads/#{root}/#{downloader_id}/get"
+  end
+
+  def clojure_download_url
+    "#{Config.nginx_url}/downloads/#{root}/#{downloader_id}/download"
   end
 
   def status_url
@@ -38,6 +50,11 @@ class Request < ActiveRecord::Base
 
   def manifest_path
     File.join(storage_path, 'manifest.txt')
+  end
+
+  def manifest_line_count
+    output, status = Open3.capture2('wc', '-l', manifest_path)
+    output.strip.split(' ').first.to_i
   end
 
   def delete_manifest_and_links

@@ -1,0 +1,3 @@
+[submodule "clojure-zipper"]
+	path = clojure-zipper
+	url = git@github.com:medusa-project/clojure-zipper.git

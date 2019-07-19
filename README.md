@@ -159,7 +159,7 @@ This is to make clear exactly what happens when a download is done
  in case other explanations are confusing.
 
 ### nginx/mod_zip 
-1. User hits /downloads/<root>/<id>/get
+1. User hits `/downloads/<root>/<id>/get`
 2. Mod-zip nginx proxies to Rails
 3. Rails returns manifest to mod-zip nginx along with header to 
    tell mod-zip nginx to create zip from manifest
@@ -181,7 +181,7 @@ wasn't closing the files until the whole zip was sent. Going to an
 external request for the file content seems to have solved this problem.
 
 ### rails/clojure-zipper
-1. User hits /downloads/<root>/<id>/download
+1. User hits `/downloads/<root>/<id>/download`
 2. Rails invokes clojure-zipper, passing it the manifest path and some other information
 3. clojure-zipper opens a zip stream on its stdout and writes the zip to it
 4. Rails reads the stdout coming from clojure-zipper and writes it to the response,

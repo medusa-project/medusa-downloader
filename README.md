@@ -32,7 +32,7 @@ download the archive once complete.
 
 After some timeout period the request is invalidated and removed.
 
-## AMQP message protocol
+## AMQP interface
 
 These are the AMQP messages that will be used. All AMQP messages will be JSON objects with the specified forms and 
 fields. Fields are mandatory unless noted.
@@ -97,15 +97,15 @@ fields. Fields are mandatory unless noted.
     
 Other messages that may be implemented in the future: delete_request, status
 
-## Web interface
+## HTTP interface
 
 ### Creation
 
-Users can create a request via a web interface rather than the 
+Users can create a request via an HTTP interface rather than the 
 AMQP interface. Generally this should only be used when the request
 is for a small number of files and hence can be completed quickly.
 
-The path for creation is /downloads/create. 
+The path for creation is `/downloads/create`. 
 It is recommended that you restrict this in some way to trusted users,
 for example by having the proxying nginx check digest authentication or
 restrict the hosts able to access this action. 
@@ -136,6 +136,36 @@ and headers that direct nginx to deliver a zip archive. So the downloader's part
 Nginx will handle the bulk of the work based on the manifest. If the file system has changed after the generation of the
 manifest there could be errors here, but there's not really a good way to deal with them. By and large there shouldn't be
 changes to the permanently stored content.
+
+### Simple Example
+
+This example uses cURL to request a zip containing one file.
+
+#### body.json
+
+```json
+{
+    "root": "medusa",
+    "zip_name": "test",
+    "targets": [
+        {
+            "type": "file",
+            "path": "1112/3275/issues/1856111501/0007.jp2"
+        }
+    ]
+}
+```
+
+#### test.sh
+
+```sh
+curl -v \
+    -H "Content-Type: application/json" \
+    --user "username:secret" \
+    --digest \
+    -d @body.json \
+    http://download.library.illinois.edu:8080/downloads/create
+```
 
 ## Extraction
 

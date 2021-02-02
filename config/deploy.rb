@@ -5,7 +5,6 @@ set :application, 'medusa-downloader'
 set :repo_url, 'https://github.com/medusa-project/medusa-downloader.git'
 
 set :bin, "#{fetch(:home)}/bin"
-set :rails_env, 'production'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp

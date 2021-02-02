@@ -7,14 +7,12 @@ gem 'rails', '~> 5.2.4'
 gem 'pg'
 # Use SCSS for stylesheets
 gem 'sass-rails'
-gem 'less-rails'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-gem 'execjs'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

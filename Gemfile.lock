@@ -389,14 +389,12 @@ DEPENDENCIES
   daemons
   database_cleaner
   delayed_job_active_record
-  execjs
   factory_bot
   font-awesome-rails
   haml-rails
   jbuilder
   jquery-rails
   json_spec
-  less-rails
   medusa_storage!
   nokogiri
   parallel

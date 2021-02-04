@@ -164,7 +164,7 @@ curl -v \
     --user "username:secret" \
     --digest \
     -d @body.json \
-    http://download.library.illinois.edu:8080/downloads/create
+    https://download.library.illinois.edu/downloads/create
 ```
 
 ## Extraction

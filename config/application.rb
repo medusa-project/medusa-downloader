@@ -1,7 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails'
-require 'models/config'
 # Pick the frameworks you want:
 require 'active_model/railtie'
 require 'active_job/railtie'
@@ -18,6 +17,8 @@ Bundler.require(*Rails.groups)
 
 module MedusaDownloader
   class Application < Rails::Application
+
+    CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'medusa_downloader.yml'))).result)[Rails.env].with_indifferent_access
 
     attr_accessor :storage_roots
 
@@ -42,7 +43,7 @@ module MedusaDownloader
       port: 587,
       enable_starttls_auto: true,
       user_name: "SMTP_Injection",
-      password: Config.instance.smtp[:password],
+      password: CONFIG['smtp'][:password],
       domain: 'library.illinois.edu '
     }
     

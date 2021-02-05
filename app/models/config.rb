@@ -18,7 +18,7 @@ class Config < Object
   end
 
   def smtp
-    config[:smtp]
+    config['smtp']
   end
 
   def amqp

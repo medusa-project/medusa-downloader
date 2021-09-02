@@ -157,6 +157,10 @@ class DownloadsController < ApplicationController
 
   end
 
+  def application_status
+    render json: ApplicationStatus.query_application_status
+  end  
+
   def manifest
     if @request.ready?
       send_file @request.manifest_path, disposition: :inline, type: 'text/plain'

@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   get 'downloads/:root/:id/manifest' => 'downloads#manifest', as: :manifest
   get 'downloads/:root/:id/download' => 'downloads#download', as: :download
 
+  get 'downloads/status' => 'downloads#application_status', as: :application_status
+
   post 'downloads/create' => 'downloads#create', as: :create_download
   # Example of named route that can be invoked with purchase_url(id: product.id)
   #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase

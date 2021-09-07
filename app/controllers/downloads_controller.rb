@@ -158,7 +158,8 @@ class DownloadsController < ApplicationController
   end
 
   def application_status
-    render json: ApplicationStatus.query_application_status
+    http_code, json_response = ApplicationStatus.query_application_status
+    render json: json_response, status: http_code
   end  
 
   def manifest

@@ -1,0 +1,21 @@
+{
+  "agent": {
+    "metrics_collection_interval": 300,
+    "logfile": "/home/downloader/log/cloudwatch/amazon-cloudwatch-agent.log"
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/home/downloader/log/health_check_status.log",
+            "log_group_name": "health_check_status.log",
+            "log_stream_name": "health_check_status.log",
+            "timezone": "Local"
+          }
+        ]
+      }
+    },
+    "log_stream_name": "downloader_demo_health_check_status"
+  }
+}

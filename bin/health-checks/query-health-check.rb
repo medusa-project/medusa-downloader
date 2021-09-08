@@ -2,7 +2,7 @@ require 'net/http'
 require 'logger'
 require 'json'
 
-logger = Logger.new('/home/downloader/medusa-downloader-capistrano/shared/log/health_check_status.log', 1, 500000)
+logger = Logger.new('/home/downloader/log/health_check_status.log', 1, 500000)
 
 instance_id = File.open('/var/lib/cloud/data/instance-id', &:readline).strip    
 

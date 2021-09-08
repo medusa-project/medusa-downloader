@@ -15,7 +15,7 @@ class ApplicationStatus < Object
         
         rclone_monit_status == STATUS_OK && rclone_mount_status == STATUS_SUCCESS ? http_code = 200 : http_code = 500
         
-        json_response = {"Rclone Monit Status" => rclone_monit_status, "Rclone Mount Status" => rclone_mount_status}.to_json
+        json_response = {"rcloneMonitStatus" => rclone_monit_status, "rcloneMountStatus" => rclone_mount_status}.to_json
 
         return http_code, json_response
     end   

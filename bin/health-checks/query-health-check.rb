@@ -1,15 +1,12 @@
 require 'net/http'
 require 'logger'
 require 'json'
-require_relative 'application'
 
 logger = Logger.new('/home/downloader/log/health_check_status.log', 1, 500000)
 
 instance_id = File.open('/var/lib/cloud/data/instance-id', &:readline).strip    
 
-downloader_uri = URI('https://demo.download.library.illinois.edu/downloads/status') if Rails.env.demo?
-downloader_uri = URI('https://download.library.illinois.edu/downloads/status') if Rails.env.production?
-
+downloader_uri = URI('https://demo.download.library.illinois.edu/downloads/status')
 downloader_response = Net::HTTP.get_response(downloader_uri)
 
 begin

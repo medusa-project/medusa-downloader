@@ -1,6 +1,7 @@
 require 'net/http'
 require 'logger'
 require 'json'
+require_relative 'application'
 
 logger = Logger.new('/home/downloader/log/health_check_status.log', 1, 500000)
 

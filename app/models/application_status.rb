@@ -7,7 +7,8 @@ class ApplicationStatus < Object
 
     def self.query_application_status
         rclone_monit_status = `monit status rclone-mount | grep status | head -n 1 |  awk '{for(i=2;i<=NF;i++) printf $i" "; print ""}'`
-        rclone_monit_status.chomp.strip!
+        rclone_monit_status.chomp!
+        rclone_monit_status.strip!
 
         rclone_path = `cat .monitrc | grep 'rclone-mount path' | awk '{ print $5; }' | sed -e 's/^"//' -e 's/"$//'`
         rclone_files = `ls #{rclone_path} | wc -l`.to_i

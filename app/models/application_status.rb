@@ -6,7 +6,7 @@ class ApplicationStatus < Object
     STATUS_ERROR = "Error"
 
     def self.query_application_status
-        rclone_monit_status = `monit status rclone-mount | grep status | head -n 1 |  awk '{ print $2; }'`
+        rclone_monit_status = `monit status rclone-mount | grep status | head -n 1 |  awk '{for(i=2;i<=NF;i++) printf $i" "; print ""}'`
         rclone_monit_status.chomp!
 
         rclone_path = `cat .monitrc | grep 'rclone-mount path' | awk '{ print $5; }' | sed -e 's/^"//' -e 's/"$//'`

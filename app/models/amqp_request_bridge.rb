@@ -58,6 +58,7 @@ class AmqpRequestBridge < AbstractRequestBridge
   end
 
   def self.send_request_completed(request)
+    Rails.logger.debug request_completed_message(request)
     AmqpConnector.instance.send_message(request.return_queue, request_completed_message(request))
   end
 

@@ -235,6 +235,7 @@ GEM
     nokogiri (1.12.4)
       mini_portile2 (~> 2.6.1)
       racc (~> 1.4)
+    open3 (0.1.1)
     parallel (1.20.1)
     passenger (6.0.10)
       rack
@@ -399,6 +400,7 @@ DEPENDENCIES
   json_spec
   medusa_storage!
   nokogiri
+  open3
   parallel
   passenger
   pg

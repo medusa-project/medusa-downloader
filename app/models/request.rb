@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'open3'
 class Request < ActiveRecord::Base
 
   attr_accessor :storage_root

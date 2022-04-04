@@ -34,6 +34,7 @@ gem 'rpairtree', require: 'pairtree'
 gem 'zip_tricks'
 gem 'zipline'
 gem 'nokogiri'
+gem 'open3'
 
 gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'master'
 

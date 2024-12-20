@@ -14,11 +14,11 @@ class AmqpConnector < Object
   end
 
   def reinitialize
-    config = Config.amqp
-    config.merge!(recover_from_connection_close: true)
+    config = Settings.amqp
+    # config.merge!(recover_from_connection_close: true)
     self.known_queues = Set.new
     self.connection.close if self.connection
-    self.connection = Bunny.new(config)
+    self.connection = Bunny.new(config.to_h)
     self.connection.start
   end
 

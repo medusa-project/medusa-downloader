@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.4'
+gem 'rails', '~> 7.0.0'
 # Use postgresql as the database for Active Record
 gem 'pg'
 # Use SCSS for stylesheets
@@ -28,12 +28,15 @@ gem 'bunny'
 gem 'haml-rails'
 gem 'delayed_job_active_record'
 gem 'daemons'
-gem 'twitter-bootstrap-rails', '~> 3.2.2'
+gem 'twitter-bootstrap-rails', '~> 5.0'
 gem 'font-awesome-rails'
 gem 'rpairtree', require: 'pairtree'
 gem 'zip_tricks'
 gem 'zipline'
 gem 'nokogiri'
+gem 'listen'
+gem 'config'
+gem 'debug'
 
 gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'master'
 

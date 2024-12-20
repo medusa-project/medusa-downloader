@@ -1,0 +1,35 @@
+#This file is processed by ERB before being parsed into YAML
+admin_email: medusa-notifications@library.illinois.edu
+smtp:
+  :password: password
+s3_common: &S3_COMMON
+  :type: s3
+  :region: us-east-2
+  :aws_access_key_id: key_id
+  :aws_secret_access_key: access_key
+roots:
+  - :name: medusa
+    :type: filesystem
+    :path: /home/downloader/mnt/medusa-demo-main-ro
+  - :name: idb
+    :type: filesystem
+    :path: /home/downloader/mnt/medusa-demo-main-ro/156/182/
+  - :name: ideals
+    :type: filesystem
+    :path: /home/downloader/mnt/medusa-demo-main-ro/186/243/
+#Note that the storage directory must be able to contain symlinks
+storage: /home/downloader/storage
+incoming_queue: client_to_downloader
+amqp:
+  ssl: true
+  host: host
+  user: downloader
+  password: password
+  vhost: downloader
+  verify_peer: false
+nginx_url: https://development.download.library.illinois.edu
+auth:
+  realm: request_creators
+  active: true
+  users:
+    idb: password

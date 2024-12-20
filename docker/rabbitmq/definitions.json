@@ -1,0 +1,92 @@
+{
+  "users": [
+    {
+      "name": "downloader",
+      "password": "password",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "downloader"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "downloader",
+      "vhost": "downloader",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "downloader",
+      "vhost": "downloader",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "client_to_downloader",
+      "vhost": "downloader",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "downloader_to_client_test",
+      "vhost": "downloader",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "downloader_to_medusa",
+      "vhost": "downloader",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "downloader_to_idb",
+      "vhost": "downloader",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+
+  ],
+  "bindings": [
+    {
+      "source": "downloader",
+      "vhost": "downloader",
+      "destination": "client_to_downloader",
+      "destination_type": "queue",
+      "routing_key": "*",
+      "arguments": {}
+    },
+    {
+      "source": "downloader",
+      "vhost": "downloader",
+      "destination": "downloader_to_medusa",
+      "destination_type": "queue",
+      "routing_key": "*",
+      "arguments": {}
+    },
+    {
+      "source": "downloader",
+      "vhost": "downloader",
+      "destination": "downloader_to_idb",
+      "destination_type": "queue",
+      "routing_key": "*",
+      "arguments": {}
+    }
+  ]
+}

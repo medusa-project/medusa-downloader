@@ -38,7 +38,7 @@ RUN gem install bundler \
 
 COPY . ./
 
-COPY config/database.yml.test config/database.yml
+RUN cp config/database.yml.test config/database.yml
 
 # Everything else has to be done in the entry command because /app will be
 # empty until we launch via docker compose.

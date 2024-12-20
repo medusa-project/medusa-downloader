@@ -1,5 +1,5 @@
 #Represent AMQP connection and provide convenience methods.
-#The amqp section of medusa_downloader.yml can contain any option
+#The amqp config section can contain any option
 #appropriate for Bunny.new.
 require 'singleton'
 require 'set'

@@ -23,9 +23,6 @@ module MedusaDownloader
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-
-    # CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, 'config', 'medusa_downloader.yml'))).result)[Rails.env].with_indifferent_access
-
     attr_accessor :storage_roots
 
     # Configuration for the application, engines, and railties goes here.

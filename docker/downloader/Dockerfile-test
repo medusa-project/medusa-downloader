@@ -17,8 +17,6 @@ WORKDIR /app
 
 COPY Gemfile Gemfile.lock ./
 
-COPY config/database.yml.test config/database.yml
-
 RUN mkdir -p /home/downloader/storage
 
 RUN mkdir -p /home/downloader/mnt/medusa-demo-main-ro
@@ -39,6 +37,8 @@ RUN gem install bundler \
     && bundle install
 
 COPY . ./
+
+COPY config/database.yml.test config/database.yml
 
 # Everything else has to be done in the entry command because /app will be
 # empty until we launch via docker compose.

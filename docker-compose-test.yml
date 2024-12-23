@@ -19,7 +19,7 @@ services:
       - "3000:3000"
     volumes:
       - .:/app
-    command: bash -c 'sleep 10 && ls -l config && bundle exec rails db:drop db:create db:schema:load && bundle exec rails db:fixtures:load && bundle exec rails cucumber'
+    command: bash -c 'sleep 10 && cp config/database.yml.test config/database.yml && ls -l config && bundle exec rails db:drop db:create db:schema:load && bundle exec rails db:fixtures:load && bundle exec rails cucumber'
   rabbitmq:
     build:
       context: .

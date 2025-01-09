@@ -1,7 +1,7 @@
 #This file is processed by ERB before being parsed into YAML
 admin_email: medusa-notifications@library.illinois.edu
 smtp:
-  :password: c5ad731e7f0b778a200e898d3863979e729f69da
+  :password: password
 s3_common: &S3_COMMON
   :type: s3
   :region: us-east-2

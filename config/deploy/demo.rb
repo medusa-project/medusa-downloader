@@ -17,6 +17,8 @@ set :ssh_options, {
   keys: ["#{Dir.home}/.ssh/medusa_prod.pem"]
 }
 
+set :linked_files, %w(config/settings/demo.local.yml)
+
 server 'aws-downloader-demo.library.illinois.edu', user: 'downloader', roles: %w(web app db), primary: true
 ask :branch, proc {`git rev-parse --abbrev-ref HEAD`.chomp}.call
 

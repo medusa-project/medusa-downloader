@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_DB: downloader
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    hostname: postgres
+    ports:
+      - "5432:5432"
+  downloader:
+    build:
+      context: .
+      dockerfile: docker/downloader/Dockerfile-development
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    command: bash -c 'sleep 10 && bundle exec rails db:drop db:create db:schema:load && bundle exec rails db:fixtures:load && bundle exec rails server -b 0.0.0.0'
+  rabbitmq:
+    build:
+      context: .
+      dockerfile: ./docker/rabbitmq/Dockerfile-rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5671:5671"
+      - "15672:15672"

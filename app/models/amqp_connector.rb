@@ -1,5 +1,5 @@
 #Represent AMQP connection and provide convenience methods.
-#The amqp section of medusa_downloader.yml can contain any option
+#The amqp config section can contain any option
 #appropriate for Bunny.new.
 require 'singleton'
 require 'set'
@@ -14,11 +14,11 @@ class AmqpConnector < Object
   end
 
   def reinitialize
-    config = Config.amqp
-    config.merge!(recover_from_connection_close: true)
+    config = Settings.amqp
+    # config.merge!(recover_from_connection_close: true)
     self.known_queues = Set.new
     self.connection.close if self.connection
-    self.connection = Bunny.new(config)
+    self.connection = Bunny.new(config.to_h)
     self.connection.start
   end
 

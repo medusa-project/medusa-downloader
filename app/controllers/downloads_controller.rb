@@ -63,7 +63,7 @@ class DownloadsController < ApplicationController
         response.headers['Content-Type'] = 'application/zip'
         response.headers['Content-Disposition'] = %Q(attachment; filename="#{@request.zip_name || @request.downloader_id}.zip")
         t = Thread.new do
-          Open3.popen2('java', '-jar', File.join(Rails.root, 'jars', 'clojure-zipper.jar'), @request.manifest_path, Config.instance.storage_path) do |stdin, stdout, wait_thr|
+          Open3.popen2('java', '-jar', File.join(Rails.root, 'jars', 'clojure-zipper.jar'), @request.manifest_path, Settings.instance.storage_path) do |stdin, stdout, wait_thr|
             #buffer = ''
             buffer_size = 1024
             begin
@@ -181,8 +181,9 @@ class DownloadsController < ApplicationController
     x = HttpRequestBridge.request_received_ok_message(req).to_json
     render json: HttpRequestBridge.request_received_ok_message(req).to_json, status: 201
       #end
-  rescue JSON::ParserError
+  rescue JSON::ParserError => error
     Rails.logger.error "Unable to parse request body: #{json_string}"
+    Rails.logger.error "Error message: #{error}"
     render json: {error: 'Unable to parse request body'}.to_json, status: 400
   rescue Request::InvalidRoot
     Rails.logger.error "Invalid root in request: #{json_string}"
@@ -209,8 +210,8 @@ class DownloadsController < ApplicationController
   end
 
   def authenticate
-    authenticate_or_request_with_http_digest(Config.auth[:realm]) do |user|
-      Config.auth[:users][user]
+    authenticate_or_request_with_http_digest(Settings.auth[:realm]) do |user|
+      Settings.auth[:users][user]
     end
   end
 

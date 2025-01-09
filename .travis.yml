@@ -4,7 +4,7 @@ language: ruby
 cache: bundler
 
 rvm:
-- 2.5.1
+- 3.2.2
 
 services:
 - postgresql
@@ -14,7 +14,6 @@ before_install:
 - sudo apt-get update
 
 before_script:
-- cp config/medusa_downloader.yml.template config/medusa_downloader.yml
 - cp config/database.yml.travis config/database.yml
 - cp config/secrets.yml.template config/secrets.yml
 - bundle exec rake db:create

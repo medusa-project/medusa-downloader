@@ -1,0 +1,16 @@
+development:
+  adapter: postgresql
+  database: downloader
+  username: postgres
+  password: postgres
+  encoding: utf8
+  host: postgres
+  pool: 10
+test:
+  adapter: postgresql
+  database: downloader_test
+  username: postgres
+  password: postgres
+  encoding: utf8
+  host: postgres
+  pool: 10

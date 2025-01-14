@@ -2,7 +2,7 @@ if defined?(PhusionPassenger)
   PhusionPassenger.on_event(:starting_worker_process) do |forked|
     if forked
       begin
-        connection = Bunny.new(Settings.amqp)
+        connection = Bunny.new(Settings.amqp.to_h)
         connection.start
         Kernel.at_exit do
           connection.close rescue nil

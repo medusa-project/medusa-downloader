@@ -37,6 +37,7 @@ gem 'zipline'
 gem 'nokogiri'
 gem 'listen'
 gem 'config'
+gem 'byebug'
 gem 'debug'
 gem 'open3'
 

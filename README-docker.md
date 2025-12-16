@@ -14,13 +14,12 @@ docker build -f docker/downloader/Dockerfile -t medusa-downloader .
 To create a Docker container from this image, the following things need to happen.
 * The container is started with application configuration files mounted in the right places
 * The container port 3000 is forwarded to a port accessible on the host
-* The run command args for starting the application. There is currently no default entrypoint for this image so the 
-application will have to started manually.
+* The run command args for starting the application. 
 
 Example:
 
 ```shell
-docker run -v ./tempfiles/database.yml:/app/config/database.yml:ro -v ./tempfiles/production.yml:/app/config/production.yml:ro -p 3000:3000 medusa-downloader bundle exec rails server -b 0.0.0.0
+docker run -v ./tempfiles/database.yml:/app/config/database.yml:ro -v ./tempfiles/production.yml:/app/config/production.yml:ro -p 3000:3000 medusa-downloader
 ```
 
 ## Docker Compose

@@ -30,3 +30,7 @@ COPY . ./
 
 # Everything else has to be done in the entry command because /app will be
 # empty until we launch via docker compose.
+
+# To put this in to development, add "-e RAILS_ENV=development" to your docker run command
+ENV RAILS_ENV="production"
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

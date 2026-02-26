@@ -33,4 +33,11 @@ COPY . ./
 
 # To put this in to development, add "-e RAILS_ENV=development" to your docker run command
 ENV RAILS_ENV="production"
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+
+# This sets the port that the application uses internally. Defaults to 3000. Unlikely this will need to be changed.
+ENV INTERNAL_PORT=3000
+
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost:${INTERNAL_PORT} || exit 1
+
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "${INTERNAL_PORT}"]

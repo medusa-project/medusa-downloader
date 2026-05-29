@@ -19,3 +19,4 @@ config/environments/*.local.yml
 .byebug_history
 
 /config/credentials/demo.key
+/config/credentials/production.key

@@ -41,6 +41,10 @@ class ApplicationStatus < Object
     end
 
     def self.delayed_job_worker_running
-        system('pid_file=run/delayed_job.pid; [ -s "$pid_file" ] && pid=$(cat "$pid_file") && kill -0 "$pid" 2>/dev/null')
+        pid_dir = ENV['PID_DIR']
+        return false if pid_dir.to_s.empty?
+
+        pid_file = File.join(pid_dir, 'delayed_job.pid')
+        system(%(pid_file="#{pid_file}"; [ -s "$pid_file" ] && pid=$(cat "$pid_file") && kill -0 "$pid" 2>/dev/null))
     end
 end

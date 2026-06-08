@@ -15,7 +15,25 @@ services:
         condition: service_started
     ports:
       - "3000:3000"
-    command: bash -c 'bundle exec rails db:drop db:create db:schema:load && bundle exec rails db:fixtures:load && bundle exec rails server -b 0.0.0.0'
+      - "80:80"
+#      - "8082:80"
+#      - "8081:8081"
+#    volumes:
+#      - /Users/hborcher/RubymineProjects/medusa-downloader/docker/downloader/start.sh:/tmp/app/start
+#      - /Users/hborcher/RubymineProjects/medusa-downloader/docker/downloader/nginx-with-mod-zip.conf:/etc/nginx/nginx.conf
+#      - /Users/hborcher/RubymineProjects/medusa-downloader/docker/downloader/nginx-with-mod-zip.conf:/usr/local/nginx/conf/nginx.conf
+#      - /Users/hborcher/RubymineProjects/medusa-downloader/docker/downloader/fileserve-nginx-config.cfg:/etc/nginx/nginx.conf
+#    command: ["bash", "/tmp/app/start", "--init-db", "--storage=/home/downloader/storage"]
+#    develop:
+#      watch:
+#        - action: sync+restart
+#          path: ./docker/downloader
+#          target: /tmp/app
+#        - action: rebuild
+#          path: docker/downloader/fileserve-nginx-config.cfg
+#        - action: rebuild
+#          path: docker/downloader/nginx-with-mod-zip.conf
+#    command: bash -c 'bundle exec rails db:drop db:create db:schema:load && bundle exec rails db:fixtures:load && bundle exec rails server -b 0.0.0.0'
   rabbitmq:
     extends:
       file: docker/services/rabbitmq.yml

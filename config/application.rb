@@ -39,7 +39,6 @@ module MedusaDownloader
     config.active_job.queue_adapter = :delayed_job
     config.action_mailer.perform_caching = false
     config.action_mailer.delivery_method = :smtp
-    config.active_record.legacy_connection_handling = false
 
     config.action_mailer.smtp_settings = {
       address: "smtp.sparkpostmail.com",

@@ -17,7 +17,7 @@ set :ssh_options, {
   keys: ["#{Dir.home}/.ssh/medusa-2023.pem"]
 }
 
-set :linked_files, %w(config/database.yml config/secrets.yml config/settings/production.local.yml .bundle/config)
+set :linked_files, %w(config/database.yml config/secrets.yml config/credentials/production.key config/settings/production.local.yml .bundle/config)
 
 server '10.225.250.138', user: 'downloader', roles: %w(web app db), primary: true
 ask :branch, proc {`git rev-parse --abbrev-ref HEAD`.chomp}.call

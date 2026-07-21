@@ -6,18 +6,45 @@ class ApplicationStatus < Object
     STATUS_ERROR = "Error"
 
     def self.query_application_status
-        mountpoint_monit_status = `monit -B summary mountpoint-mount | tail -n 1 | awk '{print $2}'`
-        mountpoint_monit_status.chomp!
-        mountpoint_monit_status.strip!
+        amqp_listener_status = AmqpListenerState.status_payload
+        delayed_job_status = delayed_job_status_payload
 
-        mountpoint_path = `df | grep mountpoint-s3 | awk '{print $6}'`
-        mountpoint_files = `ls #{mountpoint_path} | wc -l`.to_i
-        mountpoint_files != 0 ? mountpoint_mount_status = STATUS_SUCCESS : mountpoint_mount_status = STATUS_ERROR
-        
-        mountpoint_monit_status == STATUS_OK && mountpoint_mount_status == STATUS_SUCCESS ? http_code = 200 : http_code = 500
-        
-        json_response = {"mountpointMonitStatus" => mountpoint_monit_status, "mountpointMountStatus" => mountpoint_mount_status}.to_json
+        statuses_ok = [
+            amqp_listener_status['running'],
+            delayed_job_status['running']
+        ]
+        statuses_ok.all? ? http_code = 200 : http_code = 500
+
+        json_response = {
+            "amqpListener" => amqp_listener_status,
+            "delayedJobs" => delayed_job_status
+        }.to_json
 
         return http_code, json_response
-    end   
+    end
+
+    def self.delayed_job_status_payload
+        running = delayed_job_worker_running
+
+        {
+            'status' => running ? 'running' : 'stopped',
+            'running' => running,
+            'workerCount' => running ? 1 : 0
+        }
+    rescue StandardError => e
+        {
+            'status' => 'error',
+            'running' => false,
+            'workerCount' => 0,
+            'lastError' => e.to_s
+        }
+    end
+
+    def self.delayed_job_worker_running
+        pid_dir = ENV['PID_DIR']
+        return false if pid_dir.to_s.empty?
+
+        pid_file = File.join(pid_dir, 'delayed_job.pid')
+        system(%(pid_file="#{pid_file}"; [ -s "$pid_file" ] && pid=$(cat "$pid_file") && kill -0 "$pid" 2>/dev/null))
+    end
 end

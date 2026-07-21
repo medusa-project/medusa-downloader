@@ -23,7 +23,7 @@ services:
   rabbitmq:
     build:
       context: .
-      dockerfile: ./docker/rabbitmq/Dockerfile-rabbitmq
+      dockerfile: ./docker/rabbitmq/Dockerfile-rabbitmq-test
     hostname: rabbitmq
     ports:
       - "5671:5671"

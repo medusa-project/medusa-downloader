@@ -1,0 +1,10 @@
+test:
+  :ssl: false
+  :host: rabbitmq
+  :user: downloader
+  :password: password
+  :vhost: downloader
+  :verify: false
+  :verify_peer: false
+  :fail_if_no_peer_cert: false
+  :heartbeat: 30

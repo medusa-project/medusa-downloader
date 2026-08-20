@@ -1,0 +1,13 @@
+#This file is processed by ERB before being parsed into YAML
+:admin_email: medusa-notifications@library.illinois.edu
+:auth:
+  :realm: request_creators
+  :active: true
+  :users:
+    :idb: password
+:incoming_queue: client_to_downloader
+:nginx_url: https://test.download.library.illinois.edu
+:smtp:
+  :password: password
+#Note that the storage directory must be able to contain symlinks
+:storage: /home/downloader/storage

@@ -1,0 +1,14 @@
+#This file is processed by ERB before being parsed into YAML
+:admin_email: <%= Rails.application.credentials[:admin_email] %>
+:auth:
+  :realm: <%= Rails.application.credentials[:auth][:realm] %>
+  :active: <%= Rails.application.credentials[:auth][:active] %>
+  :users:
+    :idb: <%= Rails.application.credentials[:auth][:users][:idb] %>
+:incoming_queue: <%= Rails.application.credentials[:incoming_queue] %>
+:nginx_url: <%= Rails.application.credentials[:nginx_url] %>
+:smtp:
+  :password: <%= Rails.application.credentials[:smtp][:password] %>
+#Note that the storage directory must be able to contain symlinks
+:storage: <%= Rails.application.credentials[:storage] %>
+

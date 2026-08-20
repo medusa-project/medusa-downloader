@@ -286,3 +286,11 @@ the main nginx proxy_pass to the second and then set the second one up as above.
 
 The jars/ directory needs to contain the clojure-zipper.jar built from
 [clojure-zipper](https://github.com/medusa-project/clojure-zipper).
+
+### Testing
+
+Test locally with ```docker compose -f docker-compose-test.yml up --build```
+
+### Deployment
+
+Use the rails-container-scripts to deploy changes to AWS.

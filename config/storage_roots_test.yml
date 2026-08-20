@@ -1,0 +1,14 @@
+test:
+  :roots:
+    - :name: medusa
+      :type: filesystem
+      :path: /home/downloader/mnt/medusa-test
+    - :name: idb
+      :type: filesystem
+      :path: /home/downloader/mnt/medusa-test/156/182/
+    - :name: ideals
+      :type: filesystem
+      :path: /home/downloader/mnt/medusa-test/186/243/
+    - :name: test
+      :type: filesystem
+      :path: /home/downloader/mnt/medusa-test/test

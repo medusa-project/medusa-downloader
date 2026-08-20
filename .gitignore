@@ -13,11 +13,10 @@
 /tmp
 /coverage
 /.idea
-config/settings.local.yml
-config/settings/*.local.yml
 config/environments/*.local.yml
 .byebug_history
 /tempfiles
 
 /config/credentials/demo.key
+/config/credentials/development.key
 /config/credentials/production.key

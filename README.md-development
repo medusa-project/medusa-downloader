@@ -1,0 +1,32 @@
+# Medusa Downloader local development
+
+## Docker compose
+
+Run the application locally by authenticating to the AWS CLI ```aws login``` and running  ```docker compose -f docker-compose-development.yml up --build```
+
+Access the downloader aplication at ```http://localhost:3000/```
+
+### AMQP testing locally
+
+To test the downloader with AMQP queues access the AMQP UI at ```http://localhost:15672/```
+
+Authenticate to the AMQP UI with ```downloader:password```
+
+From the apropriate queue send a json request:
+```json
+{
+  "action": "export",
+  "return_queue": <return-queue>,
+  "root": <root>,
+  "zip_name": <zip-name>,
+  "client_id": <client-id>,
+  "targets": [
+    {
+      "recursive": <true/false>,
+      "type": <file/directory/literal>,
+      "path": <key>,
+      "zip_path": ""
+    }
+  ]
+}
+```

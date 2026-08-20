@@ -14,7 +14,9 @@ class ApplicationStatus < Object
             delayed_job_status['running']
         ]
         statuses_ok.all? ? http_code = 200 : http_code = 500
-
+        unless statuses_ok.all?
+            Rails.logger.error "Application status check failed: AMQP listener running: #{amqp_listener_status['running']}, Delayed job running: #{delayed_job_status['running']}"
+        end
         json_response = {
             "amqpListener" => amqp_listener_status,
             "delayedJobs" => delayed_job_status
@@ -41,10 +43,6 @@ class ApplicationStatus < Object
     end
 
     def self.delayed_job_worker_running
-        pid_dir = ENV['PID_DIR']
-        return false if pid_dir.to_s.empty?
-
-        pid_file = File.join(pid_dir, 'delayed_job.pid')
-        system(%(pid_file="#{pid_file}"; [ -s "$pid_file" ] && pid=$(cat "$pid_file") && kill -0 "$pid" 2>/dev/null))
+        system('pgrep -f "jobs:work" > /dev/null 2>&1')
     end
 end

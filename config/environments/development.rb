@@ -1,5 +1,7 @@
 require "active_support/core_ext/integer/time"
 
+DOWNLOADER_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, "config","downloader.yml"))).result)
+
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
   # config.web_console.permissions = '172.18.0.1'
@@ -37,6 +39,16 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = false
 
   config.action_mailer.perform_caching = false
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    address: "smtp.sparkpostmail.com",
+    port: 587,
+    enable_starttls_auto: true,
+    user_name: "SMTP_Injection",
+    password: DOWNLOADER_CONFIG[:smtp][:password],
+    domain: 'library.illinois.edu '
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

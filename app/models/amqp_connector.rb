@@ -14,11 +14,15 @@ class AmqpConnector < Object
   end
 
   def reinitialize
-    config = Settings.amqp
-    # config.merge!(recover_from_connection_close: true)
+    if Rails.env.test?
+      amqp_settings_path = File.join(Rails.root, 'config', 'amqp_test.yml')
+    else
+      amqp_settings_path = File.join(Rails.root, 'config', 'amqp.yml')
+    end
+    amqp_settings = YAML.load(ERB.new(File.read(amqp_settings_path)).result, aliases: true)[Rails.env]
     self.known_queues = Set.new
     self.connection.close if self.connection
-    self.connection = Bunny.new(config.to_h)
+    self.connection = Bunny.new(amqp_settings)
     self.connection.start
   end
 

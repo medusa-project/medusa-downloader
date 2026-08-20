@@ -7,7 +7,7 @@ gem 'rails', '~> 7.2.3.1'
 gem 'pg'
 # Use SCSS for stylesheets
 gem 'sass-rails'
-# Use Uglifier as compressor for JavaScript assets
+# Use Tercer as compressor for JavaScript assets
 gem 'terser'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails'
@@ -36,7 +36,6 @@ gem 'zip_tricks'
 gem 'zipline'
 gem 'nokogiri', '>= 1.19.3'
 gem 'listen'
-gem 'config'
 gem 'byebug'
 gem 'debug'
 gem 'open3'

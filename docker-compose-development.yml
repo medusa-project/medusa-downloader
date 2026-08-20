@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:12-alpine
+    extends:
+      file: docker/services/postgres.yml
+      service: postgres
+  downloader:
+    build:
+      context: .
+      dockerfile: docker/downloader/Dockerfile-development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    ports:
+      - "3000:3000"
+      - "80:80"
+    volumes:
+      - ~/.aws:/root/.aws:ro
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-default}
+      - RAILS_ENV=development
+    command: ["start", "--init-db", "--storage=/home/downloader/storage"]
+  rabbitmq:
+    extends:
+      file: docker/services/rabbitmq.yml
+      service: rabbitmq

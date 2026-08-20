@@ -34,7 +34,7 @@ class ManifestGenerator::Base
   end
 
   def relative_path_to(absolute_path)
-    absolute_path.sub(/^#{Settings.storage}/, '')
+    absolute_path.sub(/^#{DOWNLOADER_CONFIG[:storage]}/, '')
   end
 
   def add_target(target)

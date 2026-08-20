@@ -10,7 +10,7 @@ class DownloadsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :create
 
   def get
-    if @request.ready?
+    if @request.ready? && File.exist?(@request.manifest_path)
       response.headers['X-Archive-Files'] = 'zip'
       send_file @request.manifest_path, disposition: :attachment, filename: "#{@request.zip_name}.zip"
     else
@@ -63,7 +63,7 @@ class DownloadsController < ApplicationController
         response.headers['Content-Type'] = 'application/zip'
         response.headers['Content-Disposition'] = %Q(attachment; filename="#{@request.zip_name || @request.downloader_id}.zip")
         t = Thread.new do
-          Open3.popen2('java', '-jar', File.join(Rails.root, 'jars', 'clojure-zipper.jar'), @request.manifest_path, Settings.instance.storage_path) do |stdin, stdout, wait_thr|
+          Open3.popen2('java', '-jar', File.join(Rails.root, 'jars', 'clojure-zipper.jar'), @request.manifest_path, DOWNLOADER_CONFIG[:storage]) do |stdin, stdout, wait_thr|
             #buffer = ''
             buffer_size = 1024
             begin
@@ -173,11 +173,11 @@ class DownloadsController < ApplicationController
   def create
     json_string = request.body.read
     #Request.transaction do
-    Rails.logger.info "Creating request from: #{json_string}"
+    Rails.logger.warn "Creating request from: #{json_string}"
     req = HttpRequestBridge.create_request(json_string)
-    Rails.logger.info "Generating manifest for request #{req.downloader_id}"
+    Rails.logger.warn "Generating manifest for request #{req.downloader_id}"
     req.generate_manifest_and_links
-    Rails.logger.info "Generated manifest for request #{req.downloader_id}"
+    Rails.logger.warn "Generated manifest for request #{req.downloader_id}"
     x = HttpRequestBridge.request_received_ok_message(req).to_json
     render json: HttpRequestBridge.request_received_ok_message(req).to_json, status: 201
       #end
@@ -210,8 +210,8 @@ class DownloadsController < ApplicationController
   end
 
   def authenticate
-    authenticate_or_request_with_http_digest(Settings.auth[:realm]) do |user|
-      Settings.auth[:users][user]
+    authenticate_or_request_with_http_digest(DOWNLOADER_CONFIG[:auth][:realm]) do |user|
+      DOWNLOADER_CONFIG[:auth][:users][user]
     end
   end
 

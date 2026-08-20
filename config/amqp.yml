@@ -1,0 +1,22 @@
+amqp_common: &amqp_common
+  :host: <%= Rails.application.credentials[:amqp][:host] %>
+  :user: <%= Rails.application.credentials[:amqp][:user] %>
+  :password: <%= Rails.application.credentials[:amqp][:password] %>
+  :vhost: <%= Rails.application.credentials[:amqp][:vhost] %>
+  :verify: false
+  :verify_peer: false
+  :fail_if_no_peer_cert: false
+development:
+  <<: *amqp_common
+  :ssl: false
+  :heartbeat: 30
+
+demo:
+  <<: *amqp_common
+  :ssl: true
+  :heartbeat: 30
+
+production:
+  <<: *amqp_common
+  :ssl: true
+  :heartbeat: 10

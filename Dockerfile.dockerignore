@@ -1,0 +1,6 @@
+/config/credentials/demo.key
+/config/credentials/production.key
+/config/credentials/development.key
+/config/secrets.yml
+/config/settings.local.yml
+/config/settings/*

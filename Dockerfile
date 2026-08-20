@@ -67,6 +67,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get update && apt-get install -y \
     nodejs \
     postgresql-client \
+    vim \
     dirmngr gnupg apt-transport-https ca-certificates \
     jq &&\
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys D870AB033FB45BD1 && \
@@ -107,8 +108,5 @@ ENV RAILS_ENV=production \
 
 RUN mkdir -p /logs
 COPY --chmod=755 docker/downloader/start.sh /usr/local/bin/start
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-  CMD curl -f http://localhost:80/downloads/status | jq -e '.mountpointMountStatus == "Success"' || exit 1
 
 CMD ["start"]

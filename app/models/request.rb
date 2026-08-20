@@ -21,19 +21,19 @@ class Request < ActiveRecord::Base
   end
 
   def nginx_download_url
-    "#{Settings.nginx_url}/downloads/#{root}/#{downloader_id}/get"
+    "#{DOWNLOADER_CONFIG[:nginx_url]}/downloads/#{root}/#{downloader_id}/get"
   end
 
   def clojure_download_url
-    "#{Settings.nginx_url}/downloads/#{root}/#{downloader_id}/download"
+    "#{DOWNLOADER_CONFIG[:nginx_url]}/downloads/#{root}/#{downloader_id}/download"
   end
 
   def status_url
-    "#{Settings.nginx_url}/downloads/#{root}/#{downloader_id}/status"
+    "#{DOWNLOADER_CONFIG[:nginx_url]}/downloads/#{root}/#{downloader_id}/status"
   end
 
   def manifest_url
-    "#{Settings.nginx_url}/downloads/#{root}/#{downloader_id}/manifest"
+    "#{DOWNLOADER_CONFIG[:nginx_url]}/downloads/#{root}/#{downloader_id}/manifest"
   end
 
   def has_manifest?
@@ -41,7 +41,7 @@ class Request < ActiveRecord::Base
   end
 
   def storage_path
-    File.join(Settings.storage, relative_storage_path)
+    File.join(DOWNLOADER_CONFIG[:storage], relative_storage_path)
   end
 
   def relative_storage_path

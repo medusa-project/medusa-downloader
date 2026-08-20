@@ -8,18 +8,16 @@ NGINX_MODZIP_EXEC=/usr/local/sbin/nginx-modzip
 NGINX_DIGEST_USERS_FILE=$NGINX_MODZIP_PREFIX/conf/digest_users
 
 print_usage(){
-    echo "Usage: $0 --env-app-settings-file[=ENV_CONFIG_FILE] --db-config-file[=DB_CONFIG_FILE] --secrets-file[=SECRETS_FILE] [--init-db] [--storage[=STORAGE]] [--help]"
+    echo "Usage: $0 --env-app-key-var[=ENV_SECRET_KEY] [--init-db] [--storage[=STORAGE]] [--help]"
 }
 
 show_help() {
   print_usage
   echo
   echo "Arguments:                                                                             "
-  echo "  --db-config-file              : database config yaml file.                           "
-  echo "  --env-app-settings-file       : environment application config yaml file.            "
+  echo "  --env-app-secret-key-var      : environment application key variable.                "
   echo "  --nginx-digest-users-file     : NGINX digest users file.                             "
   echo "  --nginx-internal-config-file  : NGINX internal config file.                          "
-  echo "  --secrets-file                : secrets file.                                        "
   echo "  --init-db                     : initializes database before starting server.         "
   echo "  --storage                     : path to storage set in yml file.                     "
   echo "                                  Defaults to \"$DEFAULT_STORAGE_LOCATION\".           "
@@ -43,28 +41,12 @@ initDb=0
 # Parse optional arguments
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
-    --db-config-file=*)
-      db_config_file="${1#*=}"
+    --env-app-secret-key-var=*)
+      env_app_secret_key_var="${1#*=}"
       shift
       ;;
-    --db-config-file)
-      db_config_file="$2"
-      shift
-      ;;
-    --env-app-settings-file=*)
-      env_app_settings_file="${1#*=}"
-      shift
-      ;;
-    --env-app-settings-file)
-      env_app_settings_file="$2"
-      shift
-      ;;
-    --secrets-file=*)
-      secrets_file="${1#*=}"
-      shift
-      ;;
-    --secrets-file)
-      secrets_file="$2"
+    --env-app-secret-key-var)
+      env_app_secret_key_var="$2"
       shift
       ;;
     --storage=*)
@@ -109,40 +91,17 @@ if [[ -z "$storage" ]]; then
   storage="$DEFAULT_STORAGE_LOCATION"
 fi
 
-if [ ! -f "$db_config_file" ]; then
-  echo "$db_config_file does not exist"
-  echo "missing database config yaml file"
-  print_usage
-  exit 1
-fi
+# if [ -z "$env_app_secret_key_var" ]; then
+#   echo "missing environment application secret key variable"
+#   print_usage
+#   exit 1
+# fi
 
-runtime_db_config="/app/config/$(basename $db_config_file)"
-if [[ "$db_config_file" != "$runtime_db_config" ]]; then
-  ln -sf "$db_config_file" "$runtime_db_config"
-fi
-
-if [ ! -f "$env_app_settings_file" ]; then
-  echo "$env_app_settings_file does not exist"
-  echo "missing environment application config yaml file"
-  print_usage
-  exit 1
-fi
-
-runtime_env_app_settings_file="/app/config/settings/$(basename $env_app_settings_file)"
-if [[ "$env_app_settings_file" != "$runtime_env_app_settings_file" ]]; then
-  ln -sf "$env_app_settings_file" "$runtime_env_app_settings_file"
-fi
-
-if [ ! -f "$secrets_file" ]; then
-  echo "$secrets_file does not exist"
-  echo "secrets file"
-  print_usage
-  exit 1
-fi
-
-runtime_secrets_file="/app/config/$(basename $secrets_file)"
-if [[ "$secrets_file" != "$runtime_secrets_file" ]]; then
-  ln -sfv "$secrets_file" "$runtime_secrets_file"
+if [[ -n "$env_app_secret_key_var" ]]; then
+  env_app_key_file="/app/config/credentials/$RAILS_ENV.key"
+  env_key_var="$RAILS_ENV"_key
+  env_key_val=$(jq -r ".${env_key_var}" <<< "${!env_app_secret_key_var}") 
+  echo $env_key_val > "$env_app_key_file"
 fi
 
 if [[ -v nginx_internal_config_file ]]; then
@@ -188,30 +147,20 @@ echo 'precompile assets'
 bundle exec rails assets:precompile
 echo 'precompile assets - Done'
 
-PID_DIR=/app/run
-mkdir -p $PID_DIR
-DELAYED_JOB_PID_FILE=$PID_DIR/delayed_job.pid
+
 echo  'starting delayed_job'
-bundle exec bin/delayed_job -p "$RAILS_ENV" --pid-dir=$PID_DIR restart &
-sleep 15
-pgrep -f "$RAILS_ENV"/delayed_job | tail -n 1 > $DELAYED_JOB_PID_FILE
+while true; do
+  bundle exec rails jobs:work
+  echo "delayed_job exited, restarting in 5 seconds..."
+  sleep 5
+done &
 echo  'starting delayed_job - Done'
 
-PASSENGER_PID_FILE=$PID_DIR/passanger.pid
-echo  'starting Phusion Passenger'
-bundle exec passenger start -e "$RAILS_ENV" -d --pid-file=$PASSENGER_PID_FILE
-echo  'starting Phusion Passenger - Done'
-
-touch config/puma.rb
-cat << EOF > config/puma.rb
-# config/puma.rb
-
-log_requests true
-quiet false
-
-stdout_redirect '/logs/puma.stdout.log', '/logs/puma.stderr.log', true
-
-EOF
-
+RUN_DIR=/app/run
+mkdir -p $RUN_DIR
+PASSENGER_PID_FILE=$RUN_DIR/passenger.pid
 echo 'logs are found in /logs'
-bundle exec puma -b unix:///var/run/puma.sock -C config/puma.rb
+echo  'starting Phusion Passenger'
+
+bundle exec passenger start -e "$RAILS_ENV" --pid-file=$PASSENGER_PID_FILE
+echo  'starting Phusion Passenger - Done'

@@ -1,0 +1,31 @@
+s3_common: &s3_common
+  :type: <%= Rails.application.credentials[:s3_common][:type] %>
+  :region: <%= Rails.application.credentials[:s3_common][:region] %>
+  :bucket: <%= Rails.application.credentials[:s3_common][:bucket] %>
+development:
+  :roots:
+    - :name: medusa
+      <<: *s3_common
+    - :name: idb
+      <<: *s3_common
+      :prefix: <%= Rails.application.credentials[:roots][:idb_prefix] %>
+    - :name: ideals
+      <<: *s3_common
+      :prefix: <%= Rails.application.credentials[:roots][:ideals_prefix] %>  
+demo:
+  :roots:
+    - :name: medusa
+      <<: *s3_common
+    - :name: idb
+      <<: *s3_common
+      :prefix: <%= Rails.application.credentials[:roots][:idb_prefix] %>
+    - :name: ideals
+      <<: *s3_common
+      :prefix: <%= Rails.application.credentials[:roots][:ideals_prefix] %>
+production:
+  :roots:
+    - :name: medusa
+      <<: *s3_common
+    - :name: idb
+      <<: *s3_common
+      :prefix: <%= Rails.application.credentials[:roots][:idb_prefix] %>

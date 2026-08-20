@@ -1,5 +1,7 @@
 require "active_support/core_ext/integer/time"
 
+DOWNLOADER_CONFIG = YAML.load(ERB.new(File.read(File.join(Rails.root, "config","downloader_test.yml"))).result)
+
 # The test environment is used exclusively to run your application's
 # test suite. You never need to work with it otherwise. Remember that
 # your test database is "scratch space" for the test suite and is wiped

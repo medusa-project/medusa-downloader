@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.2.3.1'
+gem 'rails', '~> 7.2.3.2'
 # Use postgresql as the database for Active Record
 gem 'pg'
 # Use SCSS for stylesheets
@@ -34,7 +34,7 @@ gem 'font-awesome-rails'
 gem 'rpairtree', require: 'pairtree'
 gem 'zip_tricks'
 gem 'zipline'
-gem 'nokogiri', '>= 1.19.3'
+gem 'nokogiri', '>= 1.19.4'
 gem 'listen'
 gem 'byebug'
 gem 'debug'
@@ -42,7 +42,7 @@ gem 'open3'
 
 gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'feature-1'
 
-gem 'concurrent-ruby', require: 'concurrent'
+gem 'concurrent-ruby', '>= 1.3.7', require: 'concurrent'
 gem 'parallel'
 
 group :development, :test do
@@ -58,7 +58,7 @@ group :development do
   gem 'capistrano-rails', group: :development
   gem 'capistrano-bundler'
   gem 'capistrano-rbenv'
-  gem 'puma'
+  gem 'puma', '>= 8.0.2'
 end
 
 group :test do

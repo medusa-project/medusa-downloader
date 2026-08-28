@@ -33,8 +33,7 @@ production:
 
 demo:
   <<: *default
-  database: downloader_fargate
-  # database: downloader
+  database: downloader
   username: <%= Rails.env.demo? ? Rails.application.credentials[:primary_db][:username] : "username" %>
   password: <%= Rails.env.demo? ? Rails.application.credentials[:primary_db][:password] : "password" %>
   host: <%= Rails.env.demo? ? Rails.application.credentials[:primary_db][:host] : "host" %>

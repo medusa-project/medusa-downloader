@@ -171,6 +171,7 @@ class DownloadsController < ApplicationController
   end
 
   def create
+    request.body.rewind
     json_string = request.body.read
     #Request.transaction do
     Rails.logger.warn "Creating request from: #{json_string}"

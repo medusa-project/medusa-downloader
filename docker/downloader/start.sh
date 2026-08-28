@@ -130,11 +130,12 @@ if [ ! -d "$storage" ]; then
 fi
 
 echo "Using for storage: $storage"
-ln -sf "$storage" "$NGINX_HTML_PATH"
+rm -rf "$NGINX_HTML_PATH"
+ln -s "$storage" "$NGINX_HTML_PATH"
 
 
 echo 'starting nginx: standard'
-$NGINX_STANDARD_EXEC
+$NGINX_STANDARD_EXEC &
 $NGINX_STANDARD_EXEC -t || exit 1
 echo 'starting nginx - Done'
 

@@ -12,6 +12,10 @@ development:
     - :name: ideals
       <<: *s3_common
       :prefix: <%= Rails.application.credentials[:roots][:ideals_prefix] %>  
+    - :name: downloader
+      :type: <%= Rails.application.credentials[:s3_common][:type] %>
+      :region: <%= Rails.application.credentials[:s3_common][:region] %>
+      :bucket: <%= Rails.application.credentials[:roots][:downloader_bucket] %>
 demo:
   :roots:
     - :name: medusa
@@ -22,6 +26,10 @@ demo:
     - :name: ideals
       <<: *s3_common
       :prefix: <%= Rails.application.credentials[:roots][:ideals_prefix] %>
+    - :name: downloader
+      :type: <%= Rails.application.credentials[:s3_common][:type] %>
+      :region: <%= Rails.application.credentials[:s3_common][:region] %>
+      :bucket: <%= Rails.application.credentials[:roots][:downloader_bucket] %>
 production:
   :roots:
     - :name: medusa
@@ -29,3 +37,7 @@ production:
     - :name: idb
       <<: *s3_common
       :prefix: <%= Rails.application.credentials[:roots][:idb_prefix] %>
+    - :name: downloader
+      :type: <%= Rails.application.credentials[:s3_common][:type] %>
+      :region: <%= Rails.application.credentials[:s3_common][:region] %>
+      :bucket: <%= Rails.application.credentials[:roots][:downloader_bucket] %>

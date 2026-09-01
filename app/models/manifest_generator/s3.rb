@@ -4,6 +4,11 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
   delegate :bucket, :region, to: :storage_root
 
 
+  def generate_manifest_and_links
+    generate_file_list
+    write_file_list_and_compute_size
+  end
+
   def add_file(target)
     path = target['zip_path'] || ''
     name = target['name'] || File.basename(target['path'])
@@ -38,29 +43,45 @@ class ManifestGenerator::S3 < ManifestGenerator::Base
     end
   end
 
+  def add_literal(target)
+    name = target['name'] || raise(RuntimeError, 'Name must be provided for literal content.')
+    zip_path = target['zip_path'] || ''
+    zip_file_path = File.join(zip_path, name)
+    content = target['content']
+    size = content.bytesize
+    key = new_literal_file
+    downloader_root.s3_object(key).put(body: content)
+    file_url = downloader_root.presigned_get_url(key)
+    self.file_list << [file_url, zip_file_path, size, false]
+  end
+
+    def new_literal_file
+    name = File.join(literal_path, SecureRandom.hex(6))
+    downloader_root.exist?(name) ? literal_file_name : name
+  end
+
   def write_file_list_and_compute_size
     self.total_size = 0
-    File.open(manifest_path, 'wb') do |f|
-      self.file_list.each.with_index do |spec, i|
-        path, zip_path, size, literal = spec
-        self.total_size += size
-        final_path = "#{request.zip_name}/#{zip_path}".gsub(/\/+/, '/')
-        if literal
-          symlink_path = File.join(data_path, i.to_s)
-          FileUtils.symlink(path, symlink_path)
-          f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{final_path}\r\n"
-        else
-          f.write "- #{size} #{normalized_path(path)} #{final_path}\r\n"
-        end
-      end
+    content = StringIO.new
+    self.file_list.each do |spec|
+      path, zip_path, size, _literal = spec
+      self.total_size += size
+      final_path = "#{request.zip_name}/#{zip_path}".gsub(/\/+/, '/')
+      content.write("- #{size} #{normalized_path(path)} #{final_path}\r\n")
     end
+    downloader_root.s3_object(manifest_path).put(body: content.string)
+  end
+
+  def downloader_root
+    @downloader_root ||= MedusaDownloader::Application.storage_roots.at('downloader')
   end
 
 #convert a url like https://dls-medusa-test.s3.us-east-2.amazonaws.com/nfs_lock_test.sh?params to
 # /<bucket>/nfs_lock_test.sh?params
   def normalized_path(path)
-    truncated_path = path.gsub(/^(.*?)amazonaws.com\//, '')
-    "/#{bucket}/#{truncated_path}"
+    uri = URI.parse(path)
+    host_bucket = uri.host.split('.').first
+    "/#{host_bucket}#{uri.path}?#{uri.query}"
   end
   
 end

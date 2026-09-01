@@ -37,11 +37,27 @@ class Request < ActiveRecord::Base
   end
 
   def has_manifest?
-    File.exist?(manifest_path)
+    if ensure_storage_root.is_a?(MedusaStorage::Root::S3)
+      downloader_root.exist?(manifest_path)
+    else
+      File.exist?(manifest_path)
+    end
+  end
+
+  def manifest_content
+    if ensure_storage_root.is_a?(MedusaStorage::Root::S3)
+      downloader_root.s3_object(manifest_path).get.body.read
+    else
+      File.read(manifest_path)
+    end
   end
 
   def storage_path
-    File.join(DOWNLOADER_CONFIG[:storage], relative_storage_path)
+    if ensure_storage_root.is_a?(MedusaStorage::Root::Filesystem)
+      File.join(DOWNLOADER_CONFIG[:storage], relative_storage_path)
+    else
+      relative_storage_path
+    end
   end
 
   def relative_storage_path
@@ -59,7 +75,10 @@ class Request < ActiveRecord::Base
   end
 
   def delete_manifest_and_links
-    FileUtils.rm_rf(storage_path) if Dir.exist?(storage_path)
+    FileUtils.rm_rf(storage_path) if storage_path && Dir.exist?(storage_path)
+    if ensure_storage_root.is_a?(MedusaStorage::Root::S3)
+      downloader_root.s3_bucket.objects(prefix: relative_storage_path).batch_delete!
+    end
   end
 
   def generate_manifest_and_links
@@ -88,6 +107,10 @@ class Request < ActiveRecord::Base
     self.storage_root ||= MedusaDownloader::Application.storage_roots.at(self.root)
   end
 
+  def downloader_root
+    @downloader_root ||= MedusaDownloader::Application.storage_roots.at('downloader')
+  end
+
   def manifest_generator_class
     case ensure_storage_root
     when MedusaStorage::Root::Filesystem
@@ -102,6 +125,5 @@ class Request < ActiveRecord::Base
   def get_manifest_generator
     manifest_generator_class.new(request: self, storage_root: ensure_storage_root)
   end
-
 
 end

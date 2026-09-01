@@ -10,9 +10,10 @@ class DownloadsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: :create
 
   def get
-    if @request.ready? && File.exist?(@request.manifest_path)
+    if @request.ready? && @request.has_manifest?
       response.headers['X-Archive-Files'] = 'zip'
-      send_file @request.manifest_path, disposition: :attachment, filename: "#{@request.zip_name}.zip"
+      response.headers['Content-Disposition'] = "attachment; filename=\"#{@request.zip_name}.zip\""
+      render body: @request.manifest_content, content_type: 'application/octet-stream'
     else
       render status: :not_found, plain: 'Manifest is not yet ready for this archive'
     end
@@ -163,8 +164,8 @@ class DownloadsController < ApplicationController
   end  
 
   def manifest
-    if @request.ready?
-      send_file @request.manifest_path, disposition: :inline, type: 'text/plain'
+    if @request.ready? && @request.has_manifest?
+      render body: @request.manifest_content, content_type: 'text/plain'
     else
       render status: :not_found, plain: 'Manifest is not yet ready for this archive'
     end

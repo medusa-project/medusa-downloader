@@ -33,14 +33,25 @@ class ManifestGenerator::Filesystem < ManifestGenerator::Base
 
   def write_file_list_and_compute_size
     self.total_size = 0
-    File.open(manifest_path, 'wb') do |f|
-      self.file_list.each.with_index do |spec, i|
-        path, zip_path, size, literal = spec
+    if manifest_root.is_a?(MedusaStorage::Root::S3)
+      content = StringIO.new
+      self.file_list.each do |spec|
+        path, zip_path, size, _literal = spec
         self.total_size += size
         final_path = "#{request.zip_name}/#{zip_path}".gsub(/\/+/, '/')
-        symlink_path = File.join(data_path, i.to_s)
-        FileUtils.symlink(path, symlink_path)
-        f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{final_path}\r\n"
+        content.write("- #{size} #{normalized_path(path)} #{final_path}\r\n")
+      end
+      manifest_root.s3_object(manifest_path).put(body: content.string)
+    else
+      File.open(manifest_path, 'wb') do |f|
+        self.file_list.each.with_index do |spec, i|
+          path, zip_path, size, _literal = spec
+          self.total_size += size
+          final_path = "#{request.zip_name}/#{zip_path}".gsub(/\/+/, '/')
+          symlink_path = File.join(data_path, i.to_s)
+          FileUtils.symlink(path, symlink_path)
+          f.write "- #{size} /internal#{relative_path_to(symlink_path)} #{final_path}\r\n"
+        end
       end
     end
   end

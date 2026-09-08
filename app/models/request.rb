@@ -13,7 +13,7 @@ class Request < ActiveRecord::Base
   after_destroy :delete_manifest_and_links
 
   def download_url
-    if (manifest_line_count > 25000) and ensure_storage_root.is_a?(MedusaStorage::Root::Filesystem)
+    if ensure_storage_root.is_a?(MedusaStorage::Root::Filesystem) && (manifest_line_count > 25000)
       clojure_download_url
     else
       nginx_download_url
@@ -37,26 +37,35 @@ class Request < ActiveRecord::Base
   end
 
   def has_manifest?
-    if ensure_storage_root.is_a?(MedusaStorage::Root::S3)
-      downloader_root.exist?(manifest_path)
+    if manifest_root.is_a?(MedusaStorage::Root::S3)
+      manifest_root.exist?(manifest_path)
     else
       File.exist?(manifest_path)
     end
   end
 
   def manifest_content
-    if ensure_storage_root.is_a?(MedusaStorage::Root::S3)
-      downloader_root.s3_object(manifest_path).get.body.read
+    if manifest_root.is_a?(MedusaStorage::Root::S3)
+      manifest_root.s3_object(manifest_path).get.body.read
     else
       File.read(manifest_path)
     end
   end
 
-  def storage_path
-    if ensure_storage_root.is_a?(MedusaStorage::Root::Filesystem)
-      File.join(DOWNLOADER_CONFIG[:storage], relative_storage_path)
+  def manifest_content_scrubbed
+    if manifest_root.is_a?(MedusaStorage::Root::S3)
+      # Remove the presigned URL query string to prevent display of raw URL
+      manifest_content.gsub(/^- (\d+) \S+ ([^\r\n]+)/m, '- \1 \2')
     else
+      manifest_content
+    end
+  end
+
+  def storage_path
+    if manifest_root.is_a?(MedusaStorage::Root::S3)
       relative_storage_path
+    else
+      File.join(manifest_root.path, relative_storage_path)
     end
   end
 
@@ -76,8 +85,8 @@ class Request < ActiveRecord::Base
 
   def delete_manifest_and_links
     FileUtils.rm_rf(storage_path) if storage_path && Dir.exist?(storage_path)
-    if ensure_storage_root.is_a?(MedusaStorage::Root::S3)
-      downloader_root.s3_bucket.objects(prefix: relative_storage_path).batch_delete!
+    if manifest_root.is_a?(MedusaStorage::Root::S3)
+      manifest_root.s3_bucket.objects(prefix: relative_storage_path).batch_delete!
     end
   end
 
@@ -107,8 +116,8 @@ class Request < ActiveRecord::Base
     self.storage_root ||= MedusaDownloader::Application.storage_roots.at(self.root)
   end
 
-  def downloader_root
-    @downloader_root ||= MedusaDownloader::Application.storage_roots.at('downloader')
+  def manifest_root
+    @manifest_root ||= MedusaDownloader::Application.storage_roots.at('manifest')
   end
 
   def manifest_generator_class

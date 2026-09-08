@@ -12,3 +12,6 @@ test:
     - :name: test
       :type: filesystem
       :path: /home/downloader/mnt/medusa-test/test
+    - :name: manifest
+      :type: filesystem
+      :path: /home/downloader/storage

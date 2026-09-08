@@ -265,6 +265,23 @@ and you'd get something like the following in the manifest:
 
 - <size of file.txt> /content/my/collection/path/to/file.txt?params file.txt 
 
+Manifests can be stored in a local filesystem or in an s3 bucket (persistent when using docker) this is managed by the manifest root:
+
+```yaml
+
+production:
+  roots:
+    - name: manifest
+      path: /path/to/storage/root
+      type: filesystem
+OR
+    - name: manifest
+      type: s3
+      region: aws-region
+      bucket: manifest-bucket
+
+```
+
 ### Nginx configuration
 
 Given the above manifest format, there needs to be an entry in the nginx configuration that translates it back to the

@@ -74,6 +74,7 @@ And(/^an HTTP response should be received indicating success$/) do
 end
 
 Given(/^an unparseable HTTP request is received$/) do
+  header 'Content-Type', 'application/json'
   post create_download_path, 'invalid_json'
 end
 

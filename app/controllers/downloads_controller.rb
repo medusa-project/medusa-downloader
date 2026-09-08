@@ -64,7 +64,7 @@ class DownloadsController < ApplicationController
         response.headers['Content-Type'] = 'application/zip'
         response.headers['Content-Disposition'] = %Q(attachment; filename="#{@request.zip_name || @request.downloader_id}.zip")
         t = Thread.new do
-          Open3.popen2('java', '-jar', File.join(Rails.root, 'jars', 'clojure-zipper.jar'), @request.manifest_path, DOWNLOADER_CONFIG[:storage]) do |stdin, stdout, wait_thr|
+          Open3.popen2('java', '-jar', File.join(Rails.root, 'jars', 'clojure-zipper.jar'), @request.manifest_path, @request.manifest_root.path) do |stdin, stdout, wait_thr|
             #buffer = ''
             buffer_size = 1024
             begin
@@ -165,14 +165,14 @@ class DownloadsController < ApplicationController
 
   def manifest
     if @request.ready? && @request.has_manifest?
-      render body: @request.manifest_content, content_type: 'text/plain'
+      render body: @request.manifest_content_scrubbed, content_type: 'text/plain'
     else
       render status: :not_found, plain: 'Manifest is not yet ready for this archive'
     end
   end
 
   def create
-    request.body.rewind
+    return if request.body.nil? || request.body.eof?
     json_string = request.body.read
     #Request.transaction do
     Rails.logger.warn "Creating request from: #{json_string}"

@@ -102,7 +102,7 @@ ENV NGINX_MODZIP_PREFIX=$NGINX_MODZIP_PREFIX
 COPY . ./
 
 # To put this in to development, add "-e RAILS_ENV=development" to your docker run command
-ENV RAILS_ENV=production \
+ENV RAILS_ENV=development \
     RAILS_HOME=/app \
     RAILS_LOG_TO_STDOUT=true
 

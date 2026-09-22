@@ -5,7 +5,9 @@
   :active: <%= Rails.application.credentials[:auth][:active] %>
   :users:
     :idb: <%= Rails.application.credentials[:auth][:users][:idb] %>
+:aws_region: <%= Rails.application.credentials[:aws_region] %>
 :incoming_queue: <%= Rails.application.credentials[:incoming_queue] %>
+:incoming_sqs_queue: <%= Rails.application.credentials[:incoming_sqs_queue] %>
 :nginx_url: <%= Rails.application.credentials[:nginx_url] %>
 :smtp:
   :password: <%= Rails.application.credentials[:smtp][:password] %>

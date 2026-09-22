@@ -3,18 +3,32 @@ Feature: Create download request
   As a client
   I want to be able to request download of groups of files
 
-  Scenario: Valid request results in request object and delayed job
+  Scenario: Valid AMQP request results in request object and delayed job
     Given a valid AMQP request is received
     Then a request should exist with status 'pending'
     And a delayed job should be created to process the request
-    And an acknowlegement message should be sent to the return queue
+    And an acknowlegement message should be sent to the AMQP return queue
 
-  Scenario: Invalid root but parseable request returns error message
+  Scenario: Invalid root but parseable AMQP request returns error message
     Given an invalid root but parseable AMQP request is received
-    Then an error message should be sent to the return queue
+    Then an error message should be sent to the AMQP return queue
 
-  Scenario: Invalid, unparseable request fails
+  Scenario: Invalid, unparseable AMQP request fails
     Given an unparseable AMQP request is received
+    Then an error message should be emailed to the admin
+
+  Scenario: Valid SQS request results in request object and delayed job
+    Given a valid SQS request is received
+    Then a request should exist with status 'pending'
+    And a delayed job should be created to process the request
+    And an acknowlegement message should be sent to the SQS return queue
+
+  Scenario: Invalid root but parseable SQS request returns error message
+    Given an invalid root but parseable SQS request is received
+    Then an error message should be sent to the SQS return queue
+
+  Scenario: Invalid, unparseable SQS request fails
+    Given an unparseable SQS request is received
     Then an error message should be emailed to the admin
 
   Scenario: Valid HTTP request results in request object and delayed job
@@ -37,4 +51,3 @@ Feature: Create download request
     Given a missing files but parseable HTTP request is received
     Then no request should have been generated
     And an HTTP response should be received indicating missing files
-

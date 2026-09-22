@@ -15,6 +15,10 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - elasticmq
+    environment:
+      AWS_ACCESS_KEY_ID: dummy_access_key
+      AWS_SECRET_ACCESS_KEY: dummy_secret_key
     ports:
       - "3000:3000"
     volumes:
@@ -28,3 +32,11 @@ services:
     ports:
       - "5671:5671"
       - "15672:15672"
+  elasticmq:
+    image: softwaremill/elasticmq-native:latest
+    ports:
+      - "9324:9324"  # SQS REST API
+      - "9325:9325"  # Optional Web UI
+    volumes:
+      # Mounts your local config to the expected path inside the container
+      - ./docker/elasticMQ/elasticmq.conf:/opt/elasticmq.conf

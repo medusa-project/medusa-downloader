@@ -41,6 +41,7 @@ gem 'debug'
 gem 'open3'
 
 gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'feature-1'
+gem 'sqs_helper', git: 'https://github.com/medusa-project/sqs_helper.git', branch: 'main'
 
 gem 'concurrent-ruby', '>= 1.3.7', require: 'concurrent'
 gem 'parallel'

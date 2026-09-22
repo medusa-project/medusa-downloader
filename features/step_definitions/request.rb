@@ -14,7 +14,7 @@ Given(/^a missing files but parseable AMQP request is received$/) do
   @request = AmqpRequestBridge.create_request(missing_files_request)
 end
 
-Then(/^an error message should be sent to the return queue$/) do
+Then(/^an error message should be sent to the AMQP return queue$/) do
   AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
     expect(message['action']).to eql('request_received')
     expect(message['status']).to eql('error')
@@ -23,8 +23,8 @@ Then(/^an error message should be sent to the return queue$/) do
   end
 end
 
-And(/^a missing files message should have been sent$/) do
-  step 'an acknowlegement message should be sent to the return queue'
+And(/^a missing files AMQP message should have been sent$/) do
+  step 'an acknowlegement message should be sent to the AMQP return queue'
   AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
     expect(message['action']).to eql('error')
     expect(message['id']).to eql(@request.downloader_id)
@@ -33,8 +33,54 @@ And(/^a missing files message should have been sent$/) do
   end
 end
 
-And(/^an acknowlegement message should be sent to the return queue$/) do
+And(/^an acknowlegement message should be sent to the AMQP return queue$/) do
   AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
+    expect(message['action']).to eql('request_received')
+    expect(message['client_id']).to eql(@request.client_id)
+    expect(message['id']).to eql(@request.downloader_id)
+    expect(message['status']).to eql('ok')
+    expect(message['download_url']).to eql(@request.download_url)
+    expect(message['status_url']).to eql(@request.status_url)
+  end
+end
+
+Given(/^a valid SQS request is received$/) do
+  @request = SqsRequestBridge.create_request(valid_request)
+end
+
+Given(/^an unparseable SQS request is received$/) do
+  @request = SqsRequestBridge.create_request('invalid_json')
+end
+
+Given(/^an invalid root but parseable SQS request is received$/) do
+  @request = SqsRequestBridge.create_request(invalid_root_request)
+end
+
+Given(/^a missing files but parseable SQS request is received$/) do
+  @request = SqsRequestBridge.create_request(missing_files_request)
+end
+
+Then(/^an error message should be sent to the SQS return queue$/) do
+  SqsHelper::Connector.new(endpoint: 'http://elasticmq:9324', region: DOWNLOADER_CONFIG[:aws_region]).with_parsed_message('downloader_to_client_test') do |message|
+    expect(message['action']).to eql('request_received')
+    expect(message['status']).to eql('error')
+    expect(message['client_id']).to eql('client_id')
+    expect(message['error']).to match(/Invalid root/)
+  end
+end
+
+And(/^a missing files SQS message should have been sent$/) do
+  step 'an acknowlegement message should be sent to the SQS return queue'
+  SqsHelper::Connector.new(endpoint: 'http://elasticmq:9324', region: DOWNLOADER_CONFIG[:aws_region]).with_parsed_message('downloader_to_client_test') do |message|
+    expect(message['action']).to eql('error')
+    expect(message['id']).to eql(@request.downloader_id)
+    expect(message['error']).to match(/Missing or invalid key/)
+    expect(message['error']).to match(/missing_file_name/)
+  end
+end
+
+And(/^an acknowlegement message should be sent to the SQS return queue$/) do
+  SqsHelper::Connector.new(endpoint: 'http://elasticmq:9324', region: DOWNLOADER_CONFIG[:aws_region]).with_parsed_message('downloader_to_client_test') do |message|
     expect(message['action']).to eql('request_received')
     expect(message['client_id']).to eql(@request.client_id)
     expect(message['id']).to eql(@request.downloader_id)

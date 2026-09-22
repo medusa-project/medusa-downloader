@@ -10,8 +10,18 @@ Then(/^no manifest should have been generated$/) do
   expect(@request.has_manifest?).to be_falsey
 end
 
-And(/^a completion message should have been sent$/) do
+And(/^a completion AMQP message should have been sent$/) do
   AmqpConnector.instance.with_parsed_message('downloader_to_client_test') do |message|
+    expect(message['action']).to eql('request_completed')
+    expect(message['id']).to eql(@request.downloader_id)
+    expect(message['download_url']).to eql(@request.download_url)
+    expect(message['status_url']).to eql(@request.status_url)
+    expect(message['approximate_size'].to_d).to be > 0
+  end
+end
+
+And(/^a completion SQS message should have been sent$/) do
+  SqsHelper::Connector.new(endpoint: 'http://elasticmq:9324', region: DOWNLOADER_CONFIG[:aws_region]).with_parsed_message('downloader_to_client_test') do |message|
     expect(message['action']).to eql('request_completed')
     expect(message['id']).to eql(@request.downloader_id)
     expect(message['download_url']).to eql(@request.download_url)

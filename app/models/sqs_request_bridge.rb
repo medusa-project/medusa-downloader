@@ -1,51 +1,51 @@
-class AmqpRequestBridge < AbstractRequestBridge
+class SqsRequestBridge < AbstractRequestBridge
 
-  def self.create_request(amqp_message)
-    from_message(amqp_message).tap do |request|
-      ManifestCreation.create_for(request, 'amqp')
+  def self.create_request(sqs_message)
+    from_message(sqs_message).tap do |request|
+      ManifestCreation.create_for(request, 'sqs')
       send_request_received_ok(request)
     end
   rescue JSON::ParserError
-    Rails.logger.error "Unable to parse incoming message: #{amqp_message}"
-    ErrorMailer.parsing_error(amqp_message).deliver_now
+    Rails.logger.error "Unable to parse incoming message: #{sqs_message}"
+    ErrorMailer.parsing_error(sqs_message).deliver_now
   rescue Request::NoReturnQueue
-    Rails.logger.error "No return queue for incoming message: #{amqp_message}"
+    Rails.logger.error "No return queue for incoming message: #{sqs_message}"
   rescue Request::NoClientId
-    Rails.logger.error "No client id for incoming message: #{amqp_message}"
-    send_no_client_id_error(amqp_message)
+    Rails.logger.error "No client id for incoming message: #{sqs_message}"
+    send_no_client_id_error(sqs_message)
   rescue Request::InvalidRoot
-    Rails.logger.error "Invalid root for incoming message: #{amqp_message}"
-    send_invalid_root_error(amqp_message)
+    Rails.logger.error "Invalid root for incoming message: #{sqs_message}"
+    send_invalid_root_error(sqs_message)
   rescue Exception => e
-    Rails.logger.error "Unknown error for incoming message: #{amqp_message}"
+    Rails.logger.error "Unknown error for incoming message: #{sqs_message}"
     Rails.logger.error "Create request error: #{e}"
   end
 
 
-  def self.send_invalid_root_error(amqp_message)
-    parsed_message = JSON.parse(amqp_message).with_indifferent_access
+  def self.send_invalid_root_error(sqs_message)
+    parsed_message = JSON.parse(sqs_message).with_indifferent_access
     message = {
         action: 'request_received',
         client_id: parsed_message[:client_id],
         status: 'error',
         error: "Invalid root: #{parsed_message[:root]}"
     }
-    AmqpConnector.instance.send_message(parsed_message[:return_queue], message)
+    sqs_connector.send_message(parsed_message[:return_queue], message)
   end
 
-  def self.send_no_client_id_error(amqp_message)
-    parsed_message = JSON.parse(amqp_message).with_indifferent_access
+  def self.send_no_client_id_error(sqs_message)
+    parsed_message = JSON.parse(sqs_message).with_indifferent_access
     message = {
         action: 'request_received',
         client_id: parsed_message[:client_id],
         status: 'error',
         error: "No client id: #{parsed_message.to_json}"
     }
-    AmqpConnector.instance.send_message(parsed_message[:return_queue], message)
+    sqs_connector.send_message(parsed_message[:return_queue], message)
   end
 
   def self.send_request_received_ok(request)
-    AmqpConnector.instance.send_message(request.return_queue, request_received_ok_message(request))
+    sqs_connector.send_message(request.return_queue, request_received_ok_message(request))
   end
 
   def self.send_invalid_key_error(error, request)
@@ -54,12 +54,12 @@ class AmqpRequestBridge < AbstractRequestBridge
         id: request.downloader_id,
         error: "Missing or invalid key: #{error.key}"
     }
-    AmqpConnector.instance.send_message(request.return_queue, message)
+    sqs_connector.send_message(request.return_queue, message)
   end
 
   def self.send_request_completed(request)
     Rails.logger.warn request_completed_message(request)
-    AmqpConnector.instance.send_message(request.return_queue, request_completed_message(request))
+    sqs_connector.send_message(request.return_queue, request_completed_message(request))
   end
 
   def self.check_parameters(json)
@@ -80,6 +80,14 @@ class AmqpRequestBridge < AbstractRequestBridge
       status_url: request.status_url,
       approximate_size: request.total_size
     }
+  end
+
+  def self.sqs_connector
+    if Rails.env.test?
+      SqsHelper::Connector.new(endpoint: 'http://elasticmq:9324', region: DOWNLOADER_CONFIG[:aws_region])
+    else
+      SqsHelper::Connector.new(region: DOWNLOADER_CONFIG[:aws_region])
+    end
   end
 
 end

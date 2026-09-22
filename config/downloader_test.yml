@@ -5,7 +5,9 @@
   :active: true
   :users:
     :idb: password
+:aws_region: us-east-2
 :incoming_queue: client_to_downloader
+:incoming_sqs_queue: client-to-downloader-test
 :nginx_url: https://test.download.library.illinois.edu
 :smtp:
   :password: password

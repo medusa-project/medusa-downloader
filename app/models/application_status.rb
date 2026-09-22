@@ -7,18 +7,21 @@ class ApplicationStatus < Object
 
     def self.query_application_status
         amqp_listener_status = AmqpListenerState.status_payload
+        sqs_poller_status = SqsPollerState.status_payload
         delayed_job_status = delayed_job_status_payload
 
         statuses_ok = [
             amqp_listener_status['running'],
+            sqs_poller_status['running'],
             delayed_job_status['running']
         ]
         statuses_ok.all? ? http_code = 200 : http_code = 500
         unless statuses_ok.all?
-            Rails.logger.error "Application status check failed: AMQP listener running: #{amqp_listener_status['running']}, Delayed job running: #{delayed_job_status['running']}"
+            Rails.logger.error "Application status check failed: AMQP listener running: #{amqp_listener_status['running']}, SQS poller running: #{sqs_poller_status['running']}, Delayed job running: #{delayed_job_status['running']}"
         end
         json_response = {
             "amqpListener" => amqp_listener_status,
+            "sqsPoller" => sqs_poller_status,
             "delayedJobs" => delayed_job_status
         }.to_json
 

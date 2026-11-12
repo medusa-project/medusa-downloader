@@ -1,9 +1,4 @@
-on:
-  push:
-    branches:
-      - main
-      - gen-dev
-
+on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest

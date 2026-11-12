@@ -41,7 +41,7 @@ gem 'byebug'
 gem 'debug'
 gem 'open3'
 
-gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'master'
+gem 'medusa_storage', git: 'https://github.com/medusa-project/medusa_storage.git', branch: 'main'
 
 gem 'concurrent-ruby', require: 'concurrent'
 gem 'parallel'

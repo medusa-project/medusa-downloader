@@ -6,8 +6,8 @@ FROM ruby:3.2.6 AS base
 
 FROM base AS nginx_source
 RUN  --mount=type=tmpfs,target=/tmp/archives \
-     DOWNLOAD_URL='https://github.com/nginx/nginx/archive/refs/tags/release-1.29.8.tar.gz' && \
-     EXPECTED_HASH='b40c6423ddceeeb3aef8673fd4611091819302329e3ba78df27930607d427994' && \
+     DOWNLOAD_URL='https://github.com/nginx/nginx/releases/download/release-1.30.7/nginx-1.30.7.tar.gz' && \
+     EXPECTED_HASH='2565b5c837050e958f70fb0f73c48e2bca4542ad349fd356f46fb0c72610bc6e' && \
      curl -o /tmp/archives/nginx.tar.gz -L $DOWNLOAD_URL && \
      CALCULATED_HASH=$(sha256sum /tmp/archives/nginx.tar.gz | awk '{print $1}') && \
      if [ "$CALCULATED_HASH" != "$EXPECTED_HASH" ]; then \
@@ -34,7 +34,7 @@ FROM nginx_builder AS nginx_builder_plain
 COPY --from=nginx_source /src/ /tmp/src
 ARG NGINX_PLAIN_PREFIX
 RUN cd /tmp/src/nginx && \
-    ./auto/configure --prefix=$NGINX_PLAIN_PREFIX --with-compat --with-http_ssl_module --add-module=/tmp/src/nginx-http-auth-digest/ && \
+    ./configure --prefix=$NGINX_PLAIN_PREFIX --with-compat --with-http_ssl_module --add-module=/tmp/src/nginx-http-auth-digest/ && \
     make && \
     make install
 
@@ -54,7 +54,7 @@ RUN  --mount=type=tmpfs,target=/tmp/archives \
 
 ARG NGINX_MODZIP_PREFIX
 RUN cd /tmp/src/nginx && \
-    ./auto/configure --prefix=$NGINX_MODZIP_PREFIX --with-compat --add-dynamic-module=/tmp/src/mod_zip --with-http_ssl_module --add-module=/tmp/src/nginx-http-auth-digest/ && \
+    ./configure --prefix=$NGINX_MODZIP_PREFIX --with-compat --add-dynamic-module=/tmp/src/mod_zip --with-http_ssl_module --add-module=/tmp/src/nginx-http-auth-digest/ && \
     make && \
     echo "installing to $NGINX_MODZIP_PREFIX" && \
     make install && \
@@ -81,7 +81,7 @@ WORKDIR /app
 
 COPY Gemfile Gemfile.lock ./
 RUN --mount=type=cache,target=/root/.gem \
-    gem install bundler && \
+    gem install bundler --version "$(awk '/^BUNDLED WITH$/ {getline; print $1; exit}' Gemfile.lock)" && \
     bundle install
 
 ARG NGINX_PLAIN_PREFIX

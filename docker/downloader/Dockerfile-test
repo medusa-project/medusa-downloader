@@ -33,7 +33,7 @@ COPY storage/test/* /home/downloader/mnt/medusa-test/test
 
 RUN mkdir /home/downloader/mnt/medusa-test/test/child
 
-RUN gem install bundler \
+RUN gem install bundler --version "$(awk '/^BUNDLED WITH$/ {getline; print $1; exit}' Gemfile.lock)" \
     && bundle install
 
 COPY . ./

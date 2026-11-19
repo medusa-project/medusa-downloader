@@ -1,5 +1,8 @@
 # Docker usage
 
+The Docker images install the Bundler version recorded under `BUNDLED WITH` in
+`Gemfile.lock`. Update the lockfile when changing the Bundler version.
+
 ## Build Docker Image
 
 The dockerfile used to build the docker image is located in docker/downloader/Dockerfile. It is important to note that 
